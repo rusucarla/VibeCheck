@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Carla\\Documents\\IP\\VibeCheck\\VibeCheck\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8A463E4B-9E6C-4FD5-9FAB-6B9D03E7A94A}|VibeCheck.Server\\VibeCheck.Server.csproj|c:\\users\\carla\\documents\\ip\\vibecheck\\vibecheck\\vibecheck.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8A463E4B-9E6C-4FD5-9FAB-6B9D03E7A94A}|VibeCheck.Server\\VibeCheck.Server.csproj|solutionrelative:vibecheck.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 355,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Carla\\Documents\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\Program.cs",
+              "RelativeDocumentMoniker": "VibeCheck.Server\\Program.cs",
+              "ToolTip": "C:\\Users\\Carla\\Documents\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\Program.cs",
+              "RelativeToolTip": "VibeCheck.Server\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-19T14:03:10.192Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

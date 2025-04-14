@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\VibeCheck.Server.props" />
+</Project>
