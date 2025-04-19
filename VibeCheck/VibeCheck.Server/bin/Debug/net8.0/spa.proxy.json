@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:54894",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "C:\\Users\\Carla\\Documents\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\..\\vibecheck.client",
+"WorkingDirectory": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\..\\vibecheck.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }
