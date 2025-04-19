@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VibeCheck.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6aad40e9e9ddb05de6151630cb6d8efb952b6ed")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b510e62f8c5bc7f99e8143665f750db8382f8bc2")]
 [assembly: System.Reflection.AssemblyProductAttribute("VibeCheck.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VibeCheck.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
