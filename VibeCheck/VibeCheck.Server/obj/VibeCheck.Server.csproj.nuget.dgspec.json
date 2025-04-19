@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj": {}
+    "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj": {}
   },
   "projects": {
-    "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj": {
+    "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
+        "projectUniqueName": "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
         "projectName": "VibeCheck.Server",
-        "projectPath": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
-        "packagesPath": "C:\\Users\\madal\\.nuget\\packages\\",
-        "outputPath": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\obj\\",
+        "projectPath": "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
+        "packagesPath": "C:\\Users\\Ioana\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\madal\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Ioana\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,7 +44,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -56,7 +57,7 @@
             },
             "Microsoft.AspNetCore.SpaProxy": {
               "target": "Package",
-              "version": "[8.*-*, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -96,7 +97,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

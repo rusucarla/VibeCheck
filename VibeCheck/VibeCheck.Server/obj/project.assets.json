@@ -106,7 +106,7 @@
           }
         }
       },
-      "Microsoft.AspNetCore.SpaProxy/8.0.15": {
+      "Microsoft.AspNetCore.SpaProxy/8.0.0": {
         "type": "package",
         "compile": {
           "lib/net8.0/Microsoft.AspNetCore.SpaProxy.dll": {}
@@ -1892,10 +1892,10 @@
         "microsoft.aspnetcore.identity.entityframeworkcore.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.SpaProxy/8.0.15": {
-      "sha512": "Qni1g9jjcyiwkwB/+A9tf4lTJLUTniy/ktxQn+/9fxIjt8/Aqor+Cc5GThOwnz9WlN9L9m43q5WQ7zSx8u+UEA==",
+    "Microsoft.AspNetCore.SpaProxy/8.0.0": {
+      "sha512": "bVz+tU77Gsl7RvQHykG2EoUlReUHS0/jBqAsR1lRgIan7cx3oKSwcZ1K3b7JmKhrKGb1I/JB94irDXNHFYKxKA==",
       "type": "package",
-      "path": "microsoft.aspnetcore.spaproxy/8.0.15",
+      "path": "microsoft.aspnetcore.spaproxy/8.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1903,7 +1903,7 @@
         "THIRD-PARTY-NOTICES.TXT",
         "build/Microsoft.AspNetCore.SpaProxy.targets",
         "lib/net8.0/Microsoft.AspNetCore.SpaProxy.dll",
-        "microsoft.aspnetcore.spaproxy.8.0.15.nupkg.sha512",
+        "microsoft.aspnetcore.spaproxy.8.0.0.nupkg.sha512",
         "microsoft.aspnetcore.spaproxy.nuspec"
       ]
     },
@@ -5324,7 +5324,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 8.0.0",
-      "Microsoft.AspNetCore.SpaProxy >= 8.*-*",
+      "Microsoft.AspNetCore.SpaProxy >= 8.0.0",
       "Microsoft.EntityFrameworkCore >= 9.0.4",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.4",
       "Microsoft.EntityFrameworkCore.SqlServer >= 9.0.4",
@@ -5332,23 +5332,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\madal\\.nuget\\packages\\": {},
+    "C:\\Users\\Ioana\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
+      "projectUniqueName": "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
       "projectName": "VibeCheck.Server",
-      "projectPath": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
-      "packagesPath": "C:\\Users\\madal\\.nuget\\packages\\",
-      "outputPath": "E:\\FACULTATE\\ANUL 3\\Semestrul 2\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\obj\\",
+      "projectPath": "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\VibeCheck.Server.csproj",
+      "packagesPath": "C:\\Users\\Ioana\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Ioana\\Desktop\\facultate\\IP\\VibeCheck\\VibeCheck\\VibeCheck.Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\madal\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Ioana\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5375,7 +5375,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -5387,7 +5388,7 @@
           },
           "Microsoft.AspNetCore.SpaProxy": {
             "target": "Package",
-            "version": "[8.*-*, )"
+            "version": "[8.0.0, )"
           },
           "Microsoft.EntityFrameworkCore": {
             "target": "Package",
@@ -5427,7 +5428,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

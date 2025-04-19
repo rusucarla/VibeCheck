@@ -1,19 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VibeCheck.Models;
 
-namespace ChatterBox.Models
+namespace VibeCheck.Models
 {
-    public class BindChannelUser
+    public class BindRequestChannelUser
     {
-        [Required]
-        public string? Role { get; set; }
-
         public int ChannelId { get; set; }
 
-        public string? UserId { get; set; }
+        public required string UserId { get; set; }
+
+        public int RequestId { get; set; }
+
+        [Required]
+        public string? Status { get; set; }
+
+        public virtual ApplicationUser? User { get; set; }
 
         public virtual Channel? Channel { get; set; }
 
-        public virtual ApplicationUser? User { get; set; }
+        public virtual Request? Request { get; set; }
     }
 }
