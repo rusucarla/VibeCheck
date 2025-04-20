@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using VibeCheck.Models;
-using VibeCheck.Models;
-using VibeCheck.Server.Models;
 
 namespace VibeCheck.Server.Data
 {
@@ -14,9 +12,10 @@ namespace VibeCheck.Server.Data
 
         public DbSet<ApplicationUser> AppUsers { get; set; }
         public DbSet<BindChannelUser> BindChannelUserEntries { get; set; }
-        public DbSet<ChannelRequest> ChannelRequests { get; set; }
+        public DbSet<BindRequestChannelUser> BindRequestChannelUserEntries { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Request> Requests { get; set; }
         public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -24,9 +23,15 @@ namespace VibeCheck.Server.Data
             base.OnModelCreating(builder);
 
             builder.Entity<BindChannelUser>().HasKey(ac => new { ac.ChannelId, ac.UserId });
-
             builder.Entity<BindChannelUser>().HasOne(ac => ac.Channel).WithMany(ac => ac.BindChannelUser).HasForeignKey(ac => ac.ChannelId);
             builder.Entity<BindChannelUser>().HasOne(ac => ac.User).WithMany(ac => ac.BindChannelUsers).HasForeignKey(ac => ac.UserId);
+
+            builder.Entity<BindRequestChannelUser>().HasKey(ac => new { ac.ChannelId, ac.UserId, ac.RequestId });
+            builder.Entity<BindRequestChannelUser>().HasOne(ac => ac.Channel).WithMany(ac => ac.BindRequestChannelUser).HasForeignKey(ac => ac.ChannelId);
+            builder.Entity<BindRequestChannelUser>().HasOne(ac => ac.User).WithMany(ac => ac.BindRequestChannelUsers).HasForeignKey(ac => ac.UserId);
+            builder.Entity<BindRequestChannelUser>().HasOne(ac => ac.Request).WithMany(ac => ac.BindRequestChannelUsers).HasForeignKey(ac => ac.RequestId);
+
+            builder.Entity<Channel>().Property(c => c.Description).HasMaxLength(500);
         }
     }
 

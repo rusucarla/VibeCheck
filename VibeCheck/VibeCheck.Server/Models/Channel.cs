@@ -25,5 +25,7 @@ namespace VibeCheck.Models
         public virtual ICollection<Message>? Messages { get; set; }
 
         public virtual ICollection<BindChannelUser>? BindChannelUser { get; set; }
+
+        public virtual ICollection<BindRequestChannelUser>? BindRequestChannelUser { get; set; }
     }
 }

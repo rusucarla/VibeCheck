@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VibeCheck.Models;
 using VibeCheck.Server.Data;
-using VibeCheck.Models; // 
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -39,7 +39,6 @@ namespace VibeCheck.Server.Data
                         NormalizedEmail = "ADMIN@TEST.COM",
                         Email = "admin@test.com",
                         NormalizedUserName = "ADMIN@TEST.COM",
-                        DisplayName = "Admin", 
                         PasswordHash = _Hasher.HashPassword(null, "Parola_2")
                     }
                 );
