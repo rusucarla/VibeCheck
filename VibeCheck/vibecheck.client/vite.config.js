@@ -34,28 +34,49 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7253';
+//const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+//    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7253';
 
-// https://vitejs.dev/config/
+//// https://vitejs.dev/config/
+//export default defineConfig({
+//    plugins: [plugin()],
+//    resolve: {
+//        alias: {
+//            '@': fileURLToPath(new URL('./src', import.meta.url))
+//        }
+//    },
+//    server: {
+//        proxy: {
+//            '^/weatherforecast': {
+//                target,
+//                secure: false
+//            }
+//        },
+//        port: parseInt(env.DEV_SERVER_PORT || '5173'),
+//        https: {
+//            key: fs.readFileSync(keyFilePath),
+//            cert: fs.readFileSync(certFilePath),
+//        }
+//    }
+//})
+
+const target = 'https://localhost:7253';
+
 export default defineConfig({
     plugins: [plugin()],
-    resolve: {
-        alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
-        }
-    },
+    resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/api': {
                 target,
-                secure: false
+                changeOrigin: true,
+                secure: false,
+                rewrite: p => p.replace(/^\/api/, '')
             }
         },
-        port: parseInt(env.DEV_SERVER_PORT || '5173'),
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
-        }
+        historyApiFallback: true,
+        port: 54894,
+        https: { key: fs.readFileSync(keyFilePath), cert: fs.readFileSync(certFilePath) }
     }
-})
+});
+

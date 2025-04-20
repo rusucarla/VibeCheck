@@ -243,6 +243,30 @@ namespace VibeCheck.Server.Migrations
                     b.ToTable("BindChannelUserEntries");
                 });
 
+            modelBuilder.Entity("VibeCheck.Models.BindRequestChannelUser", b =>
+                {
+                    b.Property<int>("ChannelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ChannelId", "UserId", "RequestId");
+
+                    b.HasIndex("RequestId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BindRequestChannelUserEntries");
+                });
+
             modelBuilder.Entity("VibeCheck.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -274,8 +298,8 @@ namespace VibeCheck.Server.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -328,16 +352,13 @@ namespace VibeCheck.Server.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("VibeCheck.Server.Models.ChannelRequest", b =>
+            modelBuilder.Entity("VibeCheck.Models.Request", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ChannelId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -349,25 +370,9 @@ namespace VibeCheck.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RequesterId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TargetUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ChannelId");
-
-                    b.HasIndex("RequesterId");
-
-                    b.HasIndex("TargetUserId");
-
-                    b.ToTable("ChannelRequests");
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -440,6 +445,33 @@ namespace VibeCheck.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VibeCheck.Models.BindRequestChannelUser", b =>
+                {
+                    b.HasOne("VibeCheck.Models.Channel", "Channel")
+                        .WithMany("BindRequestChannelUser")
+                        .HasForeignKey("ChannelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VibeCheck.Models.Request", "Request")
+                        .WithMany("BindRequestChannelUsers")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VibeCheck.Models.ApplicationUser", "User")
+                        .WithMany("BindRequestChannelUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Channel");
+
+                    b.Navigation("Request");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VibeCheck.Models.Channel", b =>
                 {
                     b.HasOne("VibeCheck.Models.Category", "Category")
@@ -470,32 +502,11 @@ namespace VibeCheck.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VibeCheck.Server.Models.ChannelRequest", b =>
-                {
-                    b.HasOne("VibeCheck.Models.Channel", "Channel")
-                        .WithMany()
-                        .HasForeignKey("ChannelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VibeCheck.Models.ApplicationUser", "Requester")
-                        .WithMany()
-                        .HasForeignKey("RequesterId");
-
-                    b.HasOne("VibeCheck.Models.ApplicationUser", "TargetUser")
-                        .WithMany()
-                        .HasForeignKey("TargetUserId");
-
-                    b.Navigation("Channel");
-
-                    b.Navigation("Requester");
-
-                    b.Navigation("TargetUser");
-                });
-
             modelBuilder.Entity("VibeCheck.Models.ApplicationUser", b =>
                 {
                     b.Navigation("BindChannelUsers");
+
+                    b.Navigation("BindRequestChannelUsers");
 
                     b.Navigation("Messages");
                 });
@@ -509,7 +520,14 @@ namespace VibeCheck.Server.Migrations
                 {
                     b.Navigation("BindChannelUser");
 
+                    b.Navigation("BindRequestChannelUser");
+
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("VibeCheck.Models.Request", b =>
+                {
+                    b.Navigation("BindRequestChannelUsers");
                 });
 #pragma warning restore 612, 618
         }
