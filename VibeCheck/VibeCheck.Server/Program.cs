@@ -3,6 +3,21 @@ using Microsoft.EntityFrameworkCore;
 using VibeCheck.Models;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.Services;
+using DotNetEnv;
+
+// Pentru a folosi port-ul custom
+// creati voi un fisier .env.local in Server
+Env.Load(".env.local");
+var defaultFrontendUrl = "https://localhost:54894";
+var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? defaultFrontendUrl;
+// Verificam daca exista fisierul frontend-url.json scris de frontend
+if (File.Exists("frontend-url.json"))
+{
+    var json = File.ReadAllText("frontend-url.json");
+    var obj = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+    frontendUrl = obj?["frontendUrl"] ?? frontendUrl;
+}
+Console.WriteLine(frontendUrl);
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -24,7 +39,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(MyAllowSpecificOrigins, policy =>
-        policy.WithOrigins("https://localhost:54894")
+        policy.WithOrigins(frontendUrl)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials());
@@ -34,6 +49,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<EmailService>();
+// For the unique frontend URL
+builder.Services.AddSingleton(new FrontendConfigService(frontendUrl));
 
 var app = builder.Build();
 

@@ -1,1 +1,3 @@
 .vs/
+vibecheck.client/.env.local
+VibeCheck.Server/.env.local

@@ -15,6 +15,7 @@
     <PackageJsonDependenciesFontsourceRoboto Condition="$(PackageJsonDependenciesFontsourceRoboto) == ''">^5.2.5</PackageJsonDependenciesFontsourceRoboto>
     <PackageJsonDependenciesMuiIconsMaterial Condition="$(PackageJsonDependenciesMuiIconsMaterial) == ''">^6.4.7</PackageJsonDependenciesMuiIconsMaterial>
     <PackageJsonDependenciesMuiMaterial Condition="$(PackageJsonDependenciesMuiMaterial) == ''">^6.4.7</PackageJsonDependenciesMuiMaterial>
+    <PackageJsonDependenciesDotenv Condition="$(PackageJsonDependenciesDotenv) == ''">^16.5.0</PackageJsonDependenciesDotenv>
     <PackageJsonDependenciesReact Condition="$(PackageJsonDependenciesReact) == ''">^19.0.0</PackageJsonDependenciesReact>
     <PackageJsonDependenciesReactDom Condition="$(PackageJsonDependenciesReactDom) == ''">^19.0.0</PackageJsonDependenciesReactDom>
     <PackageJsonDependenciesReactRouterDom Condition="$(PackageJsonDependenciesReactRouterDom) == ''">^7.3.0</PackageJsonDependenciesReactRouterDom>

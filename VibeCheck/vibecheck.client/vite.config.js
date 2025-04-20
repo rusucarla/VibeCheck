@@ -6,6 +6,25 @@ import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
 import { env } from 'process';
+import dotenv from 'dotenv';
+import net from 'net';
+
+// Fiecare va avea un port local de fallback in caz de orice
+// .env.local este folosit pentru a nu fi inclus in git
+// dar sa il creati voi local
+dotenv.config({ path: '.env.local' });
+const defaultPort = 54894;
+const fallbackPort = parseInt(env.VITE_SERVER_PORT || '54999');
+
+// Verificam daca portul este disponibil
+async function isPortAvailable(port) {
+    return new Promise((resolve) => {
+        const tester = net.createServer()
+            .once('error', () => resolve(false))
+            .once('listening', () => tester.once('close', () => resolve(true)).close())
+            .listen(port);
+    });
+}
 
 const baseFolder =
     env.APPDATA !== undefined && env.APPDATA !== ''
@@ -62,21 +81,37 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 
 const target = 'https://localhost:7253';
 
-export default defineConfig({
-    plugins: [plugin()],
-    resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-    server: {
-        proxy: {
-            '^/api': {
-                target,
-                changeOrigin: true,
-                secure: false,
-                rewrite: p => p.replace(/^\/api/, '')
+export default defineConfig(async () => {
+    // Verificam care port este disponibil
+    const port = await isPortAvailable(defaultPort) ? defaultPort : fallbackPort;
+    console.log(`Vite is starting on port: ${port}`);
+    const frontendUrl = `https://localhost:${port}`;
+    // Scriu in fisierul frontend-url.json din VibeCheck.Server pentru a-l putea folosi in .NET
+    fs.writeFileSync('../VibeCheck.Server/frontend-url.json', JSON.stringify({ frontendUrl }, null, 2));
+    return {
+        plugins: [plugin()],
+        resolve: {
+            alias: {
+                '@': fileURLToPath(new URL('./src', import.meta.url))
             }
         },
-        historyApiFallback: true,
-        port: 54894,
-        https: { key: fs.readFileSync(keyFilePath), cert: fs.readFileSync(certFilePath) }
+        server: {
+            port,
+            strictPort: true, // ocupat => crash (evitam fallback-ul automat al lui Vite)
+            https: {
+                key: fs.readFileSync(keyFilePath),
+                cert: fs.readFileSync(certFilePath),
+            },
+            proxy: {
+                '^/api': {
+                    target,
+                    changeOrigin: true,
+                    secure: false,
+                    rewrite: p => p.replace(/^\/api/, '')
+                }
+            },
+            historyApiFallback: true,
+        }
     }
 });
 

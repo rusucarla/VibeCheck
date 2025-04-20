@@ -13,12 +13,14 @@ namespace VibeCheck.Server.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly EmailService _emailService;
+        private readonly FrontendConfigService _frontendConfig;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, EmailService emailService)
+        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, EmailService emailService, FrontendConfigService frontendConfig)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
+            _frontendConfig = frontendConfig;
         }
 
         [HttpPost("register")]
@@ -53,7 +55,10 @@ namespace VibeCheck.Server.Controllers
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = System.Net.WebUtility.UrlEncode(token);
-            var confirmationLink = $"https://localhost:54894/confirm-email?userId={user.Id}&token={encodedToken}";
+            var frontendUrl = _frontendConfig.FrontendUrl;
+            var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
+            // vechea varianta cu localhost fix
+            //var confirmationLink = $"https://localhost:54894/confirm-email?userId={user.Id}&token={encodedToken}";
 
             Console.WriteLine($"Trimit email de confirmare la {user.Email} cu link-ul: {confirmationLink}");
 
