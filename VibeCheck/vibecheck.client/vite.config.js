@@ -1,21 +1,17 @@
 import { fileURLToPath, URL } from 'node:url';
-
 import { defineConfig } from 'vite';
 import plugin from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
-import { env } from 'process';
 import dotenv from 'dotenv';
 import net from 'net';
+import { env } from 'process';
 
-// Fiecare va avea un port local de fallback in caz de orice
-// .env.local este folosit pentru a nu fi inclus in git
-// dar sa il creati voi local
-dotenv.config({ path: '.env.local' });
+// Incarca variabilele din .env.local
+const viteEnv = dotenv.config({ path: '.env.local' }).parsed || {};
 const defaultPort = 54894;
-const fallbackPort = parseInt(env.VITE_SERVER_PORT || '54999');
-
+const fallbackPort = parseInt(viteEnv.VITE_DEV_PORT || '54999');
 // Verificam daca portul este disponibil
 async function isPortAvailable(port) {
     return new Promise((resolve) => {
