@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:54894",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "D:\\Proiect_ip_sprints\\VibeCheck\\VibeCheck.Server\\..\\vibecheck.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
