@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "0/CL8m/luoG6crCyQMJnwvsMoxUcC+Che+PUS5oqN4U=",
+  "Hash": "sfrQylBLKrw9HAJ1t7K7k7lauzAAFg+s639wkPHJKhQ=",
   "Source": "VibeCheck.Server",
   "BasePath": "_content/VibeCheck.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "C:\\Users\\Carla\\Documents\\IP\\VibeCheck\\VibeCheck\\vibecheck.client\\vibecheck.client.esproj",
+      "Identity": "D:\\Proiect_ip_sprints\\VibeCheck\\vibecheck.client\\vibecheck.client.esproj",
       "Version": 2,
       "Source": "vibecheck.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
@@ -19,6 +19,5 @@
     }
   ],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }

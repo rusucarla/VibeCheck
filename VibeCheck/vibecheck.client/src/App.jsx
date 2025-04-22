@@ -1,34 +1,59 @@
-import { Container, Typography, Box } from "@mui/material";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Container, IconButton } from "@mui/material";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Placeholder from "./components/Placeholder";
+import ConfirmEmail from "./components/ConfirmEmail";
+import TwoFactorAuth from "./components/TwoFactorAuth";
+import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
 
-function App() {
+
+function ThemeToggle() {
+    const { darkMode, toggleTheme } = useThemeContext();
+
     return (
-        <Box
+        <IconButton
+            onClick={toggleTheme}
             sx={{
-                height: '100vh',
-                width: '100vw',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                bgcolor: 'background.default',
-                color: 'text.primary',
-                textAlign: 'center',
-                p: 2
+                position: "fixed",
+                top: 15,
+                right: 15,
+                zIndex: 1000,
+                color: "inherit",
             }}
         >
-            <Container maxWidth="md">
-                <Typography variant="h2" gutterBottom>
-                    Bine ai venit la VibeCheck!
-                </Typography>
-                <Typography variant="h6">
-                    Abia asteptam sa ne impartasesti pasiunile tale!
-                </Typography>
-            </Container>
-        </Box>
+            {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+        </IconButton>
     );
 }
 
-export default App;
 
+function AppRoutes() {
+    return (
+        <ThemeContextProvider>
+            <Router>
+                <ThemeToggle />
+                <Container maxWidth="lg" sx={{ mt: 5 }}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/confirm-email" element={<ConfirmEmail />} />
+                        <Route path="/two-factor" element={<TwoFactorAuth />} />
+                        <Route path="/placeholder" element={<Placeholder />} />
+                        <Route path="*" element={<h1>404 - Page does not exist</h1>} />
+                    </Routes>
+                </Container>
+            </Router>
+        </ThemeContextProvider>
+    );
+}
+
+export default AppRoutes;
+//de adaugat test ui later + dashboard
 
 
 //import { useEffect, useState } from 'react';
@@ -71,7 +96,7 @@ export default App;
 //            {contents}
 //        </div>
 //    );
-    
+
 //    async function populateWeatherData() {
 //        const response = await fetch('weatherforecast');
 //        if (response.ok) {
