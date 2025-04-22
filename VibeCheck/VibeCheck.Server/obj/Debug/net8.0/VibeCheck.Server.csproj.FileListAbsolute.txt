@@ -528,3 +528,6 @@ C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.
 C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\Sprache.dll
 C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\frontend-url.json
+E:\FACULTATE\ANUL 3\Semestrul 2\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\frontend-url.json
+E:\FACULTATE\ANUL 3\Semestrul 2\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\DotNetEnv.dll
+E:\FACULTATE\ANUL 3\Semestrul 2\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\Sprache.dll
