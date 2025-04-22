@@ -34,12 +34,11 @@ namespace VibeCheck.Server.Data
                     new ApplicationUser
                     {
                         Id = _GUID_Admin,
-                        UserName = "admin@test.com",
+                        UserName = "admin_default",
                         EmailConfirmed = true,
                         NormalizedEmail = "ADMIN@TEST.COM",
                         Email = "admin@test.com",
-                        NormalizedUserName = "ADMIN@TEST.COM",
-                        DisplayName = "admin@test.com",
+                        NormalizedUserName = "ADMIN_DEFAULT",
                         PasswordHash = _Hasher.HashPassword(null, "Parola_2")
                     }
                 );
@@ -48,12 +47,11 @@ namespace VibeCheck.Server.Data
                     new ApplicationUser
                     {
                         Id = _GUID_User_Role,
-                        UserName = "user@test.com",
+                        UserName = "user_default",
                         EmailConfirmed = true,
                         NormalizedEmail = "USER@TEST.COM",
                         Email = "user@test.com",
-                        DisplayName = "user@test.com",
-                        NormalizedUserName = "USER@TEST.COM",
+                        NormalizedUserName = "USER_DEFAULT",
                         PasswordHash = _Hasher.HashPassword(null, "Parola_1")
                     }
                 );

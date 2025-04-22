@@ -3,12 +3,13 @@
 export async function signup(userData) {
     console.log("Signup request received in authService:", userData);
     console.log("Email:", userData.email);
+    console.log("Username:", userData.username);
     console.log("Password:", userData.password);
     console.log("PhoneNumber:", userData.phoneNumber);
     console.log("TwoFactorEnabled:", userData.twoFactorEnabled);
 
     try {
-        const response = await fetch("https://localhost:7253/api/auth/register", {
+        const response = await fetch(`${API_URL}/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData),
@@ -34,7 +35,7 @@ export async function signup(userData) {
 
 export async function confirmEmail(userId, token) {
     const encodedToken = encodeURIComponent(token);
-    const url = `https://localhost:7253/api/auth/confirm-email?userId=${userId}&token=${encodedToken}`;
+    const url = `${API_URL}/confirm-email?userId=${userId}&token=${encodedToken}`;
 
     console.log("Sending request to backend:", url);
 
@@ -50,14 +51,14 @@ export async function confirmEmail(userId, token) {
 }
 
 
-export const login = async (email, password) => {
-    console.log("Login request:", { email, password });
+export const login = async (loginInput, password) => {
+    console.log("Login request:", { loginInput, password });
 
     try {
         const response = await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ loginInput, password }),
             credentials: "include"
         });
 
@@ -65,6 +66,7 @@ export const login = async (email, password) => {
         console.log("Login response text:", text);
 
         if (!response.ok) {
+            console.error(`Login failed: ${response.status} ${response.statusText}`);
             throw new Error(`Login failed: ${response.status} ${response.statusText} — ${text}`);
         }
 
@@ -79,11 +81,11 @@ export const login = async (email, password) => {
 };
 
 
-export const verify2FA = async (email, token) => {
+export const verify2FA = async (loginInput, token) => {
     const response = await fetch(`${API_URL}/verify-2fa`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token }),
+        body: JSON.stringify({ loginInput, token }),
         credentials: "include",
     });
 

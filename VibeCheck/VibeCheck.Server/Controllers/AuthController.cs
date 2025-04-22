@@ -31,10 +31,9 @@ namespace VibeCheck.Server.Controllers
 
             var user = new ApplicationUser
             {
-                UserName = model.Email,
+                UserName = model.Username,
                 Email = model.Email,
                 EmailConfirmed = false,
-                DisplayName = model.DisplayName,
                 PhoneNumber = model.PhoneNumber,
                 TwoFactorEnabled = model.TwoFactorEnabled
             };
@@ -114,7 +113,10 @@ namespace VibeCheck.Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Models.LoginModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            // var user = await _userManager.FindByEmailAsync(model.Email);
+            // we want to login either by username or email 
+            var user = await _userManager.FindByNameAsync(model.LoginInput)
+                       ?? await _userManager.FindByEmailAsync(model.LoginInput);
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 return BadRequest("Invalid credentials.");
@@ -130,7 +132,7 @@ namespace VibeCheck.Server.Controllers
             if (await _userManager.GetTwoFactorEnabledAsync(user))
             {
                 var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-
+                
                 await _emailService.SendEmailAsync(user.Email, "Cod 2FA", $"Codul tau 2FA este: {token}");
 
                 Console.WriteLine($"Cod 2FA generat: {token} (trimis la {user.Email})");
@@ -145,7 +147,9 @@ namespace VibeCheck.Server.Controllers
         [HttpPost("verify-2fa")]
         public async Task<IActionResult> Verify2FA([FromBody] Models.TwoFactorModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            // var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByNameAsync(model.LoginInput)
+                       ?? await _userManager.FindByEmailAsync(model.LoginInput);
             if (user == null)
             {
                 return BadRequest("User not found.");

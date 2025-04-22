@@ -7,11 +7,11 @@ function TwoFactorAuth() {
     const [token, setToken] = useState("");
     const location = useLocation();
     const navigate = useNavigate();
-    const email = location.state?.email;
-
+    const login = location.state?.login; // poate fi username sau email
+    
     const handleVerify = async () => {
         try {
-            await verify2FA(email, token);
+            await verify2FA(login, token);
             navigate("/placeholder");
         } catch (error) {
             console.error("2FA Verification failed:", error);
