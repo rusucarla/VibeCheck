@@ -6,6 +6,7 @@ import { TextField, Button, Typography, Container, FormControlLabel, Checkbox } 
 function Signup() {
     const [formData, setFormData] = useState({
         email: "",
+        displayName: "",
         password: "",
         phoneNumber: "",
         twoFactorEnabled: true
@@ -24,6 +25,7 @@ function Signup() {
 
         const payload = {
             email: formData.email,
+            displayName: formData.displayName,
             password: formData.password,
             phoneNumber: formData.phoneNumber,
             twoFactorEnabled: formData.twoFactorEnabled
@@ -51,6 +53,16 @@ function Signup() {
                     label="Email"
                     name="email"
                     value={formData.email}
+                    onChange={handleChange}
+                    margin="normal"
+                    required
+                />
+                <TextField
+                    fullWidth
+                    type="displayName"
+                    label="Username"
+                    name="displayName"
+                    value={formData.displayName}
                     onChange={handleChange}
                     margin="normal"
                     required

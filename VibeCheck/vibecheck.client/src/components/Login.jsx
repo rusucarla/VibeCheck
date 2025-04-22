@@ -14,7 +14,7 @@ function Login() {
             if (response.requiresTwoFactor) {
                 navigate("/two-factor", { state: { email } });
             } else {
-                navigate("/dashboard");
+                navigate("/placeholder");
             }
         } catch (error) {
             console.error("Login failed:", error);

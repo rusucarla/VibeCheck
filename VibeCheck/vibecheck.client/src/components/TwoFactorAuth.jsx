@@ -12,7 +12,7 @@ function TwoFactorAuth() {
     const handleVerify = async () => {
         try {
             await verify2FA(email, token);
-            navigate("/dashboard");
+            navigate("/placeholder");
         } catch (error) {
             console.error("2FA Verification failed:", error);
         }

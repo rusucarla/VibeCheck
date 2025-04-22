@@ -1,23 +1,24 @@
 {
   "Version": 1,
-  "Hash": "sfrQylBLKrw9HAJ1t7K7k7lauzAAFg+s639wkPHJKhQ=",
+  "Hash": "/0Zg+pc29nXWiC4nswz19rZ5gDe30ATgSMdXY4GLFNU=",
   "Source": "VibeCheck.Server",
   "BasePath": "_content/VibeCheck.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "D:\\Proiect_ip_sprints\\VibeCheck\\vibecheck.client\\vibecheck.client.esproj",
+      "Identity": "C:\\Users\\Carla\\Documents\\IP\\VibeCheck\\VibeCheck\\vibecheck.client\\vibecheck.client.esproj",
       "Version": 2,
       "Source": "vibecheck.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
       "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
-      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
       "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
       "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
-      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
     }
   ],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }
