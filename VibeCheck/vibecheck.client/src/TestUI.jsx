@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Box, TextField, Button, Card, CardContent, Typography } from "@mui/material";
+import { Box, TextField, Button, CardContent, Typography } from "@mui/material";
+
+import Card from "./components/ui/Card";
 
 function TestUI() {
     const [text, setText] = useState("");
@@ -31,12 +33,12 @@ function TestUI() {
                 Trimite
             </Button>
 
-            <Card sx={{ maxWidth: 400, mt: 4 }}>
-                <CardContent>
-                    <Typography variant="h5">Previzualizare text:</Typography>
-                    <Typography variant="body1">{text || "Nimic introdus inca."}</Typography>
-                </CardContent>
+            <Card title="Previzualizare text:">
+                <Typography variant="body1">
+                    {text || "Nimic introdus inca."}
+                </Typography>
             </Card>
+
         </Box>
     );
 }
