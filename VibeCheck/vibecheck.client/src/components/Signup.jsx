@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../services/authServices";
-import { TextField, Button, Typography, Container, FormControlLabel, Checkbox } from "@mui/material";
+import { Typography, Container, FormControlLabel, Checkbox } from "@mui/material";
+
+import SignupButton from "../components/ui/SignupButton";
+
+//emojiuri pt input
+import EmailIcon from "@mui/icons-material/Email";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
+import LockIcon from "@mui/icons-material/Lock";
+import Input from "../components/ui/Input";
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -43,6 +52,68 @@ function Signup() {
         }
     };
 
+    return (
+        <Container maxWidth="sm" style={{ textAlign: "center", marginTop: "50px" }}>
+            <Typography variant="h4" gutterBottom>Sign Up</Typography>
+            <form onSubmit={handleSignup}>
+                <Input
+                    label="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    startIcon={<EmailIcon />}
+                    margin="normal"
+                    required
+                />
+                <Input
+                    label="Username"
+                    name="Username"
+                    value={formData.Username}
+                    onChange={handleChange}
+                    startIcon={<PersonIcon />}
+                    margin="normal"
+                    required
+                />
+                <Input
+                    label="Phone Number"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    startIcon={<PhoneAndroidIcon />}
+                    margin="normal"
+                    required
+                />
+                <Input
+                    label="Password"
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    startIcon={<LockIcon />}
+                    margin="normal"
+                    required
+                />
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={formData.twoFactorEnabled}
+                            onChange={handleChange}
+                            name="twoFactorEnabled"
+                        />
+                    }
+                    label="Enable Two-Factor Authentication"
+                />
+                <SignupButton type="submit" sx={{ mt: 2 }} />
+            </form>
+            {message && (
+                <Typography color="error" sx={{ mt: 2 }}>
+                    {message}
+                </Typography>
+            )}
+        </Container>
+    );
+
+/*
     return (
         <Container maxWidth="sm" style={{ textAlign: "center", marginTop: "50px" }}>
             <Typography variant="h4">Sign Up</Typography>
@@ -90,11 +161,13 @@ function Signup() {
                     control={<Checkbox checked={formData.twoFactorEnabled} onChange={handleChange} name="twoFactorEnabled" />}
                     label="Enable Two-Factor Authentication"
                 />
-                <Button type="submit" variant="contained" color="primary" style={{ marginTop: "20px" }}>Sign Up</Button>
+                <SignupButton type="submit" />
             </form>
             {message && <Typography color="error" style={{ marginTop: "20px" }}>{message}</Typography>}
         </Container>
     );
+    */
 }
 
 export default Signup;
+
