@@ -7,5 +7,6 @@
         public required string Password { get; set; }
         public string? PhoneNumber { get; set; }
         public bool TwoFactorEnabled { get; set; }
+        //public string? DisplayName { get; set; }
     }
 }

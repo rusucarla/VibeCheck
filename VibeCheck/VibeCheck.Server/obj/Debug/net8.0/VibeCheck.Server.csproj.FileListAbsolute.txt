@@ -386,7 +386,6 @@ C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Deb
 C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\VibeCheck.Server.pdb
 C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\VibeCheck.Server.genruntimeconfig.cache
 C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\ref\VibeCheck.Server.dll
-C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\Carla\Documents\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\Humanizer.dll
@@ -706,3 +705,7 @@ D:\Proiect_ip_sprints\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\refint\VibeChe
 D:\Proiect_ip_sprints\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\VibeCheck.Server.pdb
 D:\Proiect_ip_sprints\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\VibeCheck.Server.genruntimeconfig.cache
 D:\Proiect_ip_sprints\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\ref\VibeCheck.Server.dll
+C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\frontend-url.json
+C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\DotNetEnv.dll
+C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\bin\Debug\net8.0\Sprache.dll
+C:\Users\Ioana\Desktop\facultate\IP\VibeCheck\VibeCheck\VibeCheck.Server\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
