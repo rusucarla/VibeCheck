@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../services/authServices";
 import { Typography, Container, FormControlLabel, Checkbox } from "@mui/material";
+import PasswordFieldWithRules, { passwordRules } from "../components/PasswordFieldWithRules";
 
 import SignupButton from "../components/ui/SignupButton";
 
@@ -23,6 +24,9 @@ function Signup() {
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
 
+    const isPasswordValid = passwordRules.every(rule => rule.test(formData.password));
+
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
@@ -31,6 +35,8 @@ function Signup() {
     const handleSignup = async (event) => {
         event.preventDefault();
         console.log("Signup button clicked!");
+        setMessage("");
+
 
         const payload = {
             email: formData.email,
@@ -83,15 +89,10 @@ function Signup() {
                     margin="normal"
                     required
                 />
-                <Input
-                    label="Password"
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                <PasswordFieldWithRules
+                    password={formData.password}
+                    setPassword={(val) => setFormData({ ...formData, password: val })}
                     startIcon={<LockIcon />}
-                    margin="normal"
-                    required
                 />
                 <FormControlLabel
                     control={
@@ -103,7 +104,11 @@ function Signup() {
                     }
                     label="Enable Two-Factor Authentication"
                 />
-                <SignupButton type="submit" sx={{ mt: 2 }} />
+                <div style={{ margin: '20px auto 0', width: '30%' }}>
+                    <SignupButton type="submit" style={{ width: '100%', display: 'block' }} />
+                </div>
+
+
             </form>
             {message && (
                 <Typography color="error" sx={{ mt: 2 }}>
