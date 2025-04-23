@@ -10,6 +10,8 @@ import ConfirmEmail from "./components/ConfirmEmail";
 import TwoFactorAuth from "./components/TwoFactorAuth";
 import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
 
+import TestUI from "./TestUI";
+import TestUIButton from "./components/ui/TestUIButton";
 
 function ThemeToggle() {
     const { darkMode, toggleTheme } = useThemeContext();
@@ -36,6 +38,7 @@ function AppRoutes() {
         <ThemeContextProvider>
             <Router>
                 <ThemeToggle />
+                <TestUIButton />
                 <Container maxWidth="lg" sx={{ mt: 5 }}>
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -44,6 +47,7 @@ function AppRoutes() {
                         <Route path="/confirm-email" element={<ConfirmEmail />} />
                         <Route path="/two-factor" element={<TwoFactorAuth />} />
                         <Route path="/placeholder" element={<Placeholder />} />
+                        <Route path="/test-ui" element={<TestUI />} />
                         <Route path="*" element={<h1>404 - Page does not exist</h1>} />
                     </Routes>
                 </Container>
