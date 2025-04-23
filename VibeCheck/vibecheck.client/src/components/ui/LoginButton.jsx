@@ -1,19 +1,12 @@
 import Button from "./Button";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 
-function LoginButton({ onClick }) {
+function LoginButton({ onClick, sx = {} }) {
     return (
         <Button
             onClick={onClick}
             color="secondary"
             startIcon={<MusicNoteIcon />}
-            sx={{
-                backgroundColor: "#8e24aa",
-                ":hover": {
-                    backgroundColor: "#6a1b9a"
-                }
-            }}
-            //am adaugat acest sx
             sx={{
                 backgroundColor: "#8e24aa",
                 ":hover": {
@@ -25,11 +18,12 @@ function LoginButton({ onClick }) {
                 fontWeight: "bold",
                 px: 4,
                 py: 1.5,
+                ...sx,
             }}
-
         >
             Login
         </Button>
+
     );
 }
 
