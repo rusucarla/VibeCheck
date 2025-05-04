@@ -375,6 +375,61 @@ namespace VibeCheck.Server.Migrations
                     b.ToTable("Requests");
                 });
 
+            modelBuilder.Entity("VibeCheck.Server.Models.TopSong", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpotifyTrackId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TopSongs");
+                });
+
+            modelBuilder.Entity("VibeCheck.Server.Models.TopTmdb", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MediaType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TmdbId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TopTmdbItems");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -502,6 +557,28 @@ namespace VibeCheck.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VibeCheck.Server.Models.TopSong", b =>
+                {
+                    b.HasOne("VibeCheck.Models.ApplicationUser", "User")
+                        .WithMany("TopSongs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VibeCheck.Server.Models.TopTmdb", b =>
+                {
+                    b.HasOne("VibeCheck.Models.ApplicationUser", "User")
+                        .WithMany("TopTmdbItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VibeCheck.Models.ApplicationUser", b =>
                 {
                     b.Navigation("BindChannelUsers");
@@ -509,6 +586,10 @@ namespace VibeCheck.Server.Migrations
                     b.Navigation("BindRequestChannelUsers");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("TopSongs");
+
+                    b.Navigation("TopTmdbItems");
                 });
 
             modelBuilder.Entity("VibeCheck.Models.Category", b =>

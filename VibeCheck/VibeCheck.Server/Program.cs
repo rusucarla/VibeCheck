@@ -4,6 +4,7 @@ using VibeCheck.Models;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.Services;
 using DotNetEnv;
+using VibeCheck.Server.Models;
 
 // Pentru a folosi port-ul custom
 // creati voi un fisier .env.local in Server
@@ -48,9 +49,16 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// For the email service (mailhog)
 builder.Services.AddSingleton<EmailService>();
 // For the unique frontend URL
 builder.Services.AddSingleton(new FrontendConfigService(frontendUrl));
+// For the music side of recomendations - Spotify
+builder.Services.Configure<SpotifyOptions>(builder.Configuration.GetSection("Spotify"));
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<SpotifyService>();
+builder.Services.Configure<TmdbOptions>(builder.Configuration.GetSection("TMDb"));
+builder.Services.AddScoped<TmdbService>();
 
 var app = builder.Build();
 
@@ -72,6 +80,13 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages(); 
 app.MapFallbackToFile("/index.html");
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeeData.Initialize(services);
+}
+
 
 app.Run();
 

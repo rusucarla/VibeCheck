@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using VibeCheck.Server.Models;
 
 namespace VibeCheck.Models
 {
@@ -10,5 +11,10 @@ namespace VibeCheck.Models
         public ICollection<BindChannelUser>? BindChannelUsers { get; set; }
 
         public ICollection<Message>? Messages { get; set; }
+        
+        public virtual ICollection<TopSong>? TopSongs { get; set; }
+        
+        public virtual ICollection<TopTmdb>? TopTmdbItems { get; set; }
+
     }
 }

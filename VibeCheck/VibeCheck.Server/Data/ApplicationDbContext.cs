@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using VibeCheck.Models;
+using VibeCheck.Server.Models;
 
 namespace VibeCheck.Server.Data
 {
@@ -17,6 +18,8 @@ namespace VibeCheck.Server.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<TopSong> TopSongs { get; set; }
+        public DbSet<TopTmdb> TopTmdbItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -32,6 +35,35 @@ namespace VibeCheck.Server.Data
             builder.Entity<BindRequestChannelUser>().HasOne(ac => ac.Request).WithMany(ac => ac.BindRequestChannelUsers).HasForeignKey(ac => ac.RequestId);
 
             builder.Entity<Channel>().Property(c => c.Description).HasMaxLength(500);
+            
+            builder.Entity<TopSong>()
+                .HasOne(ts => ts.User)
+                .WithMany(u => u.TopSongs)
+                .HasForeignKey(ts => ts.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<TopSong>()
+                .Property(ts => ts.SpotifyTrackId)
+                .IsRequired();
+
+            builder.Entity<TopSong>()
+                .Property(ts => ts.Position)
+                .IsRequired();
+            
+            builder.Entity<TopTmdb>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.TopTmdbItems)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<TopTmdb>()
+                .Property(ts => ts.TmdbId)
+                .IsRequired();
+
+            builder.Entity<TopTmdb>()
+                .Property(ts => ts.Position)
+                .IsRequired();
+
         }
     }
 
