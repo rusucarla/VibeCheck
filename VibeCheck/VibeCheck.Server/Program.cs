@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.Services;
 using DotNetEnv;
+using VibeCheck.Server.Migrations;
 using VibeCheck.Server.Models;
 
 // Pentru a folosi port-ul custom

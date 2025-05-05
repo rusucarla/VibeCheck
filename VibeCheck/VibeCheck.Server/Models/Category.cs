@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VibeCheck.Server.Models;
 
-namespace VibeCheck.Models
+namespace VibeCheck.Server.Models
 {
     public class Category
     {
@@ -12,6 +13,7 @@ namespace VibeCheck.Models
         [MaxLength(50, ErrorMessage = "Category title must contain at most 50 characters!")]
         public string? Title { get; set; }
 
-        public virtual ICollection<Channel>? Channels { get; set; }
+        // public virtual ICollection<Channel>? Channels { get; set; }
+        public virtual ICollection<BindCategoryChannel> BindCategoryChannels { get; set; } = new List<BindCategoryChannel>();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 
-namespace VibeCheck.Models
+namespace VibeCheck.Server.Models
 {
     public class BindRequestChannelUser
     {

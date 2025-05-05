@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "/0Zg+pc29nXWiC4nswz19rZ5gDe30ATgSMdXY4GLFNU=",
+  "Hash": "lfGOuvAkYogX8UAZg2KO8pkS0eaI0TvagYlH8XpJtnE=",
   "Source": "VibeCheck.Server",
   "BasePath": "_content/VibeCheck.Server",
   "Mode": "Default",
@@ -11,10 +11,10 @@
       "Version": 2,
       "Source": "vibecheck.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
-      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishProperties": "",
       "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
       "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
-      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildProperties": "",
       "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
     }
   ],

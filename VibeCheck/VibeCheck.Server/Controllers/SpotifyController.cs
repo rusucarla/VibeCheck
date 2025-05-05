@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.DTO;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 using VibeCheck.Server.Services;
 
 namespace VibeCheck.Server.Controllers

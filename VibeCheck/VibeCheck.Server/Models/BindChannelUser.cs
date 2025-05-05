@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VibeCheck.Models
+namespace VibeCheck.Server.Models
 {
 	public class BindChannelUser
 	{
