@@ -52,7 +52,12 @@ namespace VibeCheck.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _userManager.Users.ToListAsync();
+            // var users = await _userManager.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.TopTmdbItems)
+                .Include(u => u.TopSongs)
+                .ToListAsync();
+
             return Ok(users);
         }
 

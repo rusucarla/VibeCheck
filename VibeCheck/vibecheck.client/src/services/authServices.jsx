@@ -113,7 +113,7 @@ export const logout = async () => {
 
 export async function getUserRole() {
     try {
-        const response = await fetch(`${API_URL_GENERAL}/users/role`, {
+        const response = await fetch(`${API_URL_GENERAL}/Users/role`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -137,7 +137,7 @@ export async function getUserRole() {
 
 export async function getUserInfo() {
     try {
-        const response = await fetch(`${API_URL_GENERAL}/users/info`, {
+        const response = await fetch(`${API_URL_GENERAL}/Users/info`, {
             method: "GET",
             credentials: "include",
             headers: {
@@ -161,7 +161,7 @@ export async function getUserInfo() {
 
 export async function updateUserProfile(updatedData) {
     try {
-        const response = await fetch(`${API_URL_GENERAL}/users/update`, {
+        const response = await fetch(`${API_URL_GENERAL}/Users/update`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

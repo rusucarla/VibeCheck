@@ -30,7 +30,7 @@ const UserProfile = () => {
 
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState({
-        name: "",
+        userName: "",
         email: "",
         phoneNumber: "",
         avatar: null,
@@ -43,7 +43,7 @@ const UserProfile = () => {
                 const userInfo = await getUserInfo();
                 setUser(userInfo);
                 setFormData({
-                    name: userInfo.name || "",
+                    userName: userInfo.userName || "",
                     email: userInfo.email || "",
                     phoneNumber: userInfo.phoneNumber || "",
                     avatar: null,
@@ -103,9 +103,9 @@ const UserProfile = () => {
     const handleSave = async () => {
         try {
             const updatedUser = {
-                UserName: formData.name,
-                Email: formData.email,
-                PhoneNumber: formData.phoneNumber,
+                userName: formData.userName,
+                email: formData.email,
+                phoneNumber: formData.phoneNumber,
             };
 
             const result = await updateUserProfile(updatedUser);
@@ -172,15 +172,15 @@ const UserProfile = () => {
                             </label>
                             <TextField
                                 fullWidth
-                                label="Name"
-                                name="name"
-                                value={formData.name}
+                                label="userName"
+                                name="userName"
+                                value={formData.userName}
                                 onChange={handleChange}
                                 sx={{ mb: 2 }}
                             />
                             <TextField
                                 fullWidth
-                                label="Email"
+                                label="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
@@ -202,7 +202,7 @@ const UserProfile = () => {
                                 sx={{ width: 100, height: 100, marginBottom: 2 }}
                             />
                             <Typography variant="h5" sx={{ color: "#1976d2", fontWeight: 600 }}>
-                                <strong>Name: </strong>{user.name}
+                                <strong>Name: </strong>{user.userName}
                             </Typography>
                             <Typography variant="body2" color={secondaryText} gutterBottom>
                                 <strong>Email: </strong>{user.email}
