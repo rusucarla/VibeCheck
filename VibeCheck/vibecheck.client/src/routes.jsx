@@ -14,7 +14,10 @@ function AppRoutes() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/two-factor" element={<TwoFactorAuth />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<Placeholder />} />
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                    <Route index element={<Placeholder />} /> {/* ruta /dashboard */}
+                    // <Route path="profile" element={<UserProfile />} /> {/* ruta /dashboard/profile */}
+                </Route>
                 <Route path="/confirm-email" element={<ConfirmEmail />} />
                 <Route path="*" element={<h1> 404 - Page does not exist</h1>} />
             </Routes>

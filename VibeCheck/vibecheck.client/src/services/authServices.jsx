@@ -1,4 +1,5 @@
 ﻿const API_URL = "https://localhost:7253/api/auth";
+const API_URL_GENERAL = "https://localhost:7253/api";
 
 export async function signup(userData) {
     console.log("Signup request received in authService:", userData);
@@ -108,3 +109,76 @@ export const logout = async () => {
 
     return await response.json();
 };
+
+
+export async function getUserRole() {
+    try {
+        const response = await fetch(`${API_URL_GENERAL}/users/role`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to get user role");
+        }
+
+        const data = await response.json();
+        console.log("Rol utilizator:", data.roles);
+        return data.roles; // este un array, ex: ["User"] sau ["Admin"]
+    } catch (error) {
+        console.error("Eroare la obtinerea rolului:", error);
+        return [];
+    }
+}
+
+
+export async function getUserInfo() {
+    try {
+        const response = await fetch(`${API_URL_GENERAL}/users/info`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch user information");
+        }
+
+        const data = await response.json();
+        console.log("User information:", data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching user information:", error);
+        throw error;
+    }
+}
+
+
+export async function updateUserProfile(updatedData) {
+    try {
+        const response = await fetch(`${API_URL_GENERAL}/users/update`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(updatedData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Update failed: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Update successful:", data);
+        return data;
+    } catch (error) {
+        console.error("Error updating user profile:", error);
+        throw error;
+    }
+}

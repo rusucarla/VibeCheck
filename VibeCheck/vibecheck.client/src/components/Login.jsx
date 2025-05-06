@@ -16,7 +16,7 @@ function Login() {
             if (response.requiresTwoFactor) {
                 navigate("/two-factor", { state: { login: loginInput } });
             } else {
-                navigate("/placeholder");
+                navigate("/dashboard");
             }
         } catch (error) {
             console.error("Login failed:", error);

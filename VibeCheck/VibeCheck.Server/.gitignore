@@ -1,0 +1,57 @@
+﻿# -----------------------------------
+# Build results
+bin/
+obj/
+
+# Exclude Debug and Release folders (even nested)
+**/Debug/
+**/Release/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio cache
+.vs/
+
+# ASP.NET temporary files
+*.db
+*.db-shm
+*.db-wal
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Others
+*.pdb
+*.dll
+*.exe
+*.tmp
+*.bak
+*.cache
+*.log
+*.sdf
+*.scc
+*.suo
+*.swp
+
+node_modules/
+
+# Static files generated
+wwwroot/
+dist/
+build/
