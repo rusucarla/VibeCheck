@@ -13,6 +13,7 @@ import AdminPanel from "./components/DashboardComponents/AdminPanel";
 import CategoriesPage from "./components/DashboardComponents/CategoriesPage";
 import AddCategoryPage from "./components/DashboardComponents/AddCategoryPage";
 import EditCategoryPage from "./components/DashboardComponents/EditCategoryPage";
+import ChannelsPage from "./components/DashboardComponents/ChannelsPage";
 import UserProfile from "./components/UserProfile.jsx";
 import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
 
@@ -57,6 +58,7 @@ function AppRoutes() {
                         {/* Dashboard cu subpagini */}
                         <Route path="/dashboard" element={<DashboardLayout />}>
                             <Route path="admin" element={<AdminPanel />} />
+                            <Route path="channels" element={<ChannelsPage />} />
                             <Route path="categories" element={<CategoriesPage />} />
                             <Route path="profile" element={<UserProfile />} />
                             <Route path="categories/new" element={<AddCategoryPage />} />
