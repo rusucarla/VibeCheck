@@ -73,32 +73,6 @@ const UserProfile = () => {
         }
     };
 
-    //const handleSave = async () => {
-    //    try {
-    //        const updatedUser = {
-    //            ...user,
-    //            name: formData.name,
-    //            email: formData.email,
-    //            phoneNumber: formData.phoneNumber,
-    //        };
-
-    //        if (formData.avatar) {
-    //            const reader = new FileReader();
-    //            reader.onloadend = () => {
-    //                updatedUser.avatarUrl = reader.result;
-    //                setUser(updatedUser);
-    //                setEditMode(false);
-    //            };
-    //            reader.readAsDataURL(formData.avatar);
-    //        } else {
-    //            setUser(updatedUser);
-    //            setEditMode(false);
-    //        }
-
-    //    } catch (err) {
-    //        console.error("Update failed", err);
-    //    }
-    //};
 
     const handleSave = async () => {
         try {
