@@ -8,6 +8,13 @@ import Signup from "./components/Signup";
 import Placeholder from "./components/Placeholder";
 import ConfirmEmail from "./components/ConfirmEmail";
 import TwoFactorAuth from "./components/TwoFactorAuth";
+import DashboardLayout from "./components/DashboardLayout";
+import AdminPanel from "./components/DashboardComponents/AdminPanel";
+import CategoriesPage from "./components/DashboardComponents/CategoriesPage";
+import AddCategoryPage from "./components/DashboardComponents/AddCategoryPage";
+import EditCategoryPage from "./components/DashboardComponents/EditCategoryPage";
+import ChannelsPage from "./components/DashboardComponents/ChannelsPage";
+import UserProfile from "./components/UserProfile.jsx";
 import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
 
 import TestUI from "./TestUI";
@@ -48,6 +55,17 @@ function AppRoutes() {
                         <Route path="/two-factor" element={<TwoFactorAuth />} />
                         <Route path="/placeholder" element={<Placeholder />} />
                         <Route path="/test-ui" element={<TestUI />} />
+                        {/* Dashboard cu subpagini */}
+                        <Route path="/dashboard" element={<DashboardLayout />}>
+                            <Route path="admin" element={<AdminPanel />} />
+                            <Route path="channels" element={<ChannelsPage />} />
+                            <Route path="categories" element={<CategoriesPage />} />
+                            <Route path="profile" element={<UserProfile />} />
+                            <Route path="categories/new" element={<AddCategoryPage />} />
+                            <Route path="categories/edit/:id" element={<EditCategoryPage />} />
+                            {/*<Route path="channels" element={<Channels />} />*/}
+                            {/*<Route path="inbox" element={<Inbox />} />*/}
+                        </Route>
                         <Route path="*" element={<h1>404 - Page does not exist</h1>} />
                     </Routes>
                 </Container>
@@ -57,57 +75,3 @@ function AppRoutes() {
 }
 
 export default AppRoutes;
-//de adaugat test ui later + dashboard
-
-
-//import { useEffect, useState } from 'react';
-//import './App.css';
-
-//function App() {
-//    const [forecasts, setForecasts] = useState();
-
-//    useEffect(() => {
-//        populateWeatherData();
-//    }, []);
-
-//    const contents = forecasts === undefined
-//        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-//        : <table className="table table-striped" aria-labelledby="tableLabel">
-//            <thead>
-//                <tr>
-//                    <th>Date</th>
-//                    <th>Temp. (C)</th>
-//                    <th>Temp. (F)</th>
-//                    <th>Summary</th>
-//                </tr>
-//            </thead>
-//            <tbody>
-//                {forecasts.map(forecast =>
-//                    <tr key={forecast.date}>
-//                        <td>{forecast.date}</td>
-//                        <td>{forecast.temperatureC}</td>
-//                        <td>{forecast.temperatureF}</td>
-//                        <td>{forecast.summary}</td>
-//                    </tr>
-//                )}
-//            </tbody>
-//        </table>;
-
-//    return (
-//        <div>
-//            <h1 id="tableLabel">Weather forecast</h1>
-//            <p>This component demonstrates fetching data from the server.</p>
-//            {contents}
-//        </div>
-//    );
-
-//    async function populateWeatherData() {
-//        const response = await fetch('weatherforecast');
-//        if (response.ok) {
-//            const data = await response.json();
-//            setForecasts(data);
-//        }
-//    }
-//}
-
-//export default App;
