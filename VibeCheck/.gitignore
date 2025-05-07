@@ -1,3 +1,5 @@
 .vs/
+**/bin/
+**/obj/
 vibecheck.client/.env.local
 VibeCheck.Server/.env.local

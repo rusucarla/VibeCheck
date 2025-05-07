@@ -73,7 +73,6 @@ const UserProfile = () => {
         }
     };
 
-
     const handleSave = async () => {
         try {
             const updatedUser = {

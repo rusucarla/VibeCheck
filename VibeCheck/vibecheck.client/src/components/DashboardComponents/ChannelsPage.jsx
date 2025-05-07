@@ -10,7 +10,7 @@ function ChannelsPage() {
                 Canale disponibile
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Aici po?i vedea toate canalele ?i po?i crea unul nou.
+                Aici poti vedea toate canalele si poti crea unul nou.
             </Typography>
             <Box mt={4}>
                 <Button
@@ -18,7 +18,7 @@ function ChannelsPage() {
                     color="primary"
                     onClick={() => navigate("/channels/create")}
                 >
-                    Creeazã un canal nou
+                    Creeaza un canal nou
                 </Button>
             </Box>
         </Container>
