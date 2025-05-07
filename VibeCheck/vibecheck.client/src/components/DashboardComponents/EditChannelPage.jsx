@@ -1,0 +1,132 @@
+﻿import { useEffect, useState } from "react";
+import {
+    TextField,
+    Button,
+    Typography,
+    Box,
+    MenuItem,
+    FormHelperText,
+    FormControl,
+    InputLabel,
+    Select,
+    OutlinedInput,
+    Checkbox,
+    ListItemText
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import { getChannelById, updateChannel } from "../../services/channelService";
+import { fetchCategories } from "../../services/categoryService";
+
+function EditChannelPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        name: "",
+        description: "",
+        categoryIds: []
+    });
+
+    const [categories, setCategories] = useState([]);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const loadData = async () => {
+            const channel = await getChannelById(id);
+            const cats = await fetchCategories();
+
+            setFormData({
+                name: channel.name,
+                description: channel.description,
+                categoryIds: channel.categories.map((c) => c.id)
+            });
+
+            setCategories(cats.data || []);
+        };
+
+        loadData();
+    }, [id]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleCategoryChange = (e) => {
+        // const value = e.target.value;
+        const value = e.target.value.map((v) => Number(v));
+        if (value.length <= 5) {
+            setFormData((prev) => ({ ...prev, categoryIds: value }));
+            setError("");
+        } else {
+            setError("You can select up to 5 categories.");
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (formData.categoryIds.length < 1) {
+            setError("Select at least one category.");
+            return;
+        }
+        try {
+            await updateChannel(id, formData);
+            navigate("/dashboard/channels");
+        } catch (err) {
+            console.error("Failed to update channel", err);
+        }
+    };
+
+    return (
+        <Box sx={{ maxWidth: 500, mx: "auto" }}>
+            <Typography variant="h4" gutterBottom>Edit Channel</Typography>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    label="Channel Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                    required
+                />
+                <TextField
+                    label="Description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                    required
+                />
+                <FormControl fullWidth margin="normal" error={!!error}>
+                    <InputLabel>Select Categories</InputLabel>
+                    <Select
+                        multiple
+                        name="categoryIds"
+                        value={formData.categoryIds}
+                        onChange={handleCategoryChange}
+                        input={<OutlinedInput label="Select Categories" />}
+                        renderValue={(selected) =>
+                            categories
+                                .filter((c) => selected.includes(c.id))
+                                .map((c) => c.title)
+                                .join(", ")
+                        }
+                    >
+                        {categories.map((cat) => (
+                            <MenuItem key={cat.id} value={cat.id}>
+                                <Checkbox checked={formData.categoryIds.includes(cat.id)} />
+                                <ListItemText primary={cat.title} />
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    {error && <FormHelperText>{error}</FormHelperText>}
+                </FormControl>
+                <Button type="submit" variant="contained">Save Changes</Button>
+            </form>
+        </Box>
+    );
+}
+
+export default EditChannelPage;

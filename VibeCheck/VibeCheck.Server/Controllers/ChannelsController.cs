@@ -142,39 +142,96 @@ namespace VibeCheck.Server.Controllers
             return CreatedAtAction(nameof(GetChannel), new { id = channel.Id }, new { channel.Id });
         }
         
+        // [HttpPut("{id:int}")]
+        // public async Task<IActionResult> UpdateChannel(int id, [FromBody] ChannelCreateDTO dto)
+        // {
+        //     var channel = await _context.Channels
+        //         .Include(c => c.BindCategoryChannels)
+        //         .FirstOrDefaultAsync(c => c.Id == id);
+        //
+        //     if (channel == null) return NotFound();
+        //
+        //     if (dto.CategoryIds == null || dto.CategoryIds.Count < 1 || dto.CategoryIds.Count > 5)
+        //         return BadRequest(new { message = "Select between 1 and 5 categories." });
+        //
+        //     // var existingCategoryIds = channel.BindCategoryChannels.Select(b => b.CategoryId).ToList();
+        //     var existingCategoryIds = await _context.Categories
+        //         .Where(c => dto.CategoryIds.Contains(c.Id))
+        //         .Select(c => c.Id)
+        //         .ToListAsync();
+        //
+        //     var invalidIds = dto.CategoryIds.Except(existingCategoryIds).ToList();
+        //
+        //     if (invalidIds.Any())
+        //     {
+        //         return BadRequest(new
+        //         {
+        //             message = $"The following category ID(s) do not exist: {string.Join(", ", invalidIds)}"
+        //         });
+        //     }
+        //
+        //     var toRemove = channel.BindCategoryChannels.Where(b => !dto.CategoryIds.Contains(b.CategoryId)).ToList();
+        //     _context.BindCategoryChannelEntries.RemoveRange(toRemove);
+        //
+        //     foreach (var catId in dto.CategoryIds.Except(existingCategoryIds))
+        //     {
+        //         _context.BindCategoryChannelEntries.Add(new BindCategoryChannel
+        //         {
+        //             ChannelId = id,
+        //             CategoryId = catId
+        //         });
+        //     }
+        //
+        //     channel.Name = dto.Name;
+        //     channel.Description = dto.Description;
+        //
+        //     await _context.SaveChangesAsync();
+        //
+        //     return NoContent();
+        // }
+        
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateChannel(int id, [FromBody] ChannelCreateDTO dto)
         {
+            Console.WriteLine($"[UpdateChannel] Called for channel ID: {id}");
+
             var channel = await _context.Channels
                 .Include(c => c.BindCategoryChannels)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (channel == null) return NotFound();
+            if (channel == null)
+            {
+                Console.WriteLine($"[UpdateChannel] Channel {id} not found.");
+                return NotFound();
+            }
 
             if (dto.CategoryIds == null || dto.CategoryIds.Count < 1 || dto.CategoryIds.Count > 5)
+            {
+                Console.WriteLine($"[UpdateChannel] Invalid number of categories: {dto.CategoryIds?.Count ?? 0}");
                 return BadRequest(new { message = "Select between 1 and 5 categories." });
+            }
 
-            // var existingCategoryIds = channel.BindCategoryChannels.Select(b => b.CategoryId).ToList();
-            var existingCategoryIds = await _context.Categories
+            var existingIds = await _context.Categories
                 .Where(c => dto.CategoryIds.Contains(c.Id))
                 .Select(c => c.Id)
                 .ToListAsync();
 
-            var invalidIds = dto.CategoryIds.Except(existingCategoryIds).ToList();
-
+            var invalidIds = dto.CategoryIds.Except(existingIds).ToList();
             if (invalidIds.Any())
             {
+                Console.WriteLine($"[UpdateChannel] Invalid category IDs: {string.Join(", ", invalidIds)}");
                 return BadRequest(new
                 {
                     message = $"The following category ID(s) do not exist: {string.Join(", ", invalidIds)}"
                 });
             }
 
-            var toRemove = channel.BindCategoryChannels.Where(b => !dto.CategoryIds.Contains(b.CategoryId)).ToList();
-            _context.BindCategoryChannelEntries.RemoveRange(toRemove);
+            Console.WriteLine($"[UpdateChannel] Removing {channel.BindCategoryChannels.Count} existing bindings...");
+            _context.BindCategoryChannelEntries.RemoveRange(channel.BindCategoryChannels);
 
-            foreach (var catId in dto.CategoryIds.Except(existingCategoryIds))
+            foreach (var catId in dto.CategoryIds)
             {
+                Console.WriteLine($"[UpdateChannel] Binding Category {catId} to Channel {id}");
                 _context.BindCategoryChannelEntries.Add(new BindCategoryChannel
                 {
                     ChannelId = id,
@@ -185,10 +242,13 @@ namespace VibeCheck.Server.Controllers
             channel.Name = dto.Name;
             channel.Description = dto.Description;
 
+            Console.WriteLine("[UpdateChannel] Saving changes...");
             await _context.SaveChangesAsync();
+            Console.WriteLine("[UpdateChannel] Channel updated successfully.");
 
             return NoContent();
         }
+
         
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteChannel(int id)

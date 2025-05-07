@@ -19,6 +19,8 @@ import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
 
 import TestUI from "./TestUI";
 import TestUIButton from "./components/ui/TestUIButton";
+import AddChannelPage from "@/components/DashboardComponents/AddChannelPage.jsx";
+import EditChannelPage from "@/components/DashboardComponents/EditChannelPage.jsx";
 
 function ThemeToggle() {
     const { darkMode, toggleTheme } = useThemeContext();
@@ -63,6 +65,8 @@ function AppRoutes() {
                             <Route path="profile" element={<UserProfile />} />
                             <Route path="categories/new" element={<AddCategoryPage />} />
                             <Route path="categories/edit/:id" element={<EditCategoryPage />} />
+                            <Route path="channels/new" element={<AddChannelPage />} />
+                            <Route path="channels/edit/:id" element={<EditChannelPage />} />
                             {/*<Route path="channels" element={<Channels />} />*/}
                             {/*<Route path="inbox" element={<Inbox />} />*/}
                         </Route>

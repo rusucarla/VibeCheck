@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.Controllers;
 using VibeCheck.Server.Models;
-using VibeCheck.Models;
-
 
 public class UpdateUserDto
 {
@@ -23,20 +21,20 @@ namespace VibeCheck.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
-        // GET: api/users/{id}
+        // GET: api/user/{id}
         [Authorize(Roles = "User, Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
@@ -49,7 +47,7 @@ namespace VibeCheck.Server.Controllers
             return Ok(user);
         }
 
-        // GET: api/users
+        // GET: api/user
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
