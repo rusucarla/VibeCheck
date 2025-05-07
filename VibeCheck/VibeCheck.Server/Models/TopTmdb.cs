@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 
 namespace VibeCheck.Server.Models
 {

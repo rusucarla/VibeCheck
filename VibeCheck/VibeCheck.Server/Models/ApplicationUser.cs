@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using VibeCheck.Server.Models;
 
-namespace VibeCheck.Models
+namespace VibeCheck.Server.Models
 {
 	public class ApplicationUser : IdentityUser
 	{
@@ -15,6 +15,8 @@ namespace VibeCheck.Models
         public virtual ICollection<TopSong>? TopSongs { get; set; }
         
         public virtual ICollection<TopTmdb>? TopTmdbItems { get; set; }
+        
+        public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
 
     }
 }

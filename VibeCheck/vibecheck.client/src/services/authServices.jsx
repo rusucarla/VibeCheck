@@ -182,3 +182,4 @@ export async function updateUserProfile(updatedData) {
         throw error;
     }
 }
+

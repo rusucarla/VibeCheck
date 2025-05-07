@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VibeCheck.Server.Models;
 
-namespace VibeCheck.Models
+namespace VibeCheck.Server.Models
 {
 	public class Channel
 	{
@@ -17,15 +18,18 @@ namespace VibeCheck.Models
         [MaxLength(50, ErrorMessage = "Channel description must contain at most 50 characters!")]
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Channels are required to have a category!")]
-        public int CategoryId { get; set; }
-
-        public virtual Category? Category { get; set; }
+        // [Required(ErrorMessage = "Channels are required to have a category!")]
+        // public int CategoryId { get; set; }
+        //
+        // public virtual Category? Category { get; set; }
+        public virtual ICollection<BindCategoryChannel> BindCategoryChannels { get; set; } = new List<BindCategoryChannel>();
 
         public virtual ICollection<Message>? Messages { get; set; }
 
         public virtual ICollection<BindChannelUser>? BindChannelUser { get; set; }
 
         public virtual ICollection<BindRequestChannelUser>? BindRequestChannelUser { get; set; }
+        
+        public virtual ICollection<Recommendation>? Recommendations { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 using VibeCheck.Server.Services;
 
 namespace VibeCheck.Server.Controllers

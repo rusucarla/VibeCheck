@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.DTO;
 using VibeCheck.Server.Models;

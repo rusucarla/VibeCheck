@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 using VibeCheck.Server.Data;
 
 // namespace VibeCheck.Server.Data
@@ -73,9 +73,9 @@ using VibeCheck.Server.Data;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using VibeCheck.Models;
+using VibeCheck.Server.Models;
 
-namespace VibeCheck.Server.Data
+namespace VibeCheck.Server.Migrations
 {
     public class SeeData
     {
