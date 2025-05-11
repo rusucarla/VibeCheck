@@ -192,7 +192,30 @@ namespace VibeCheck.Server.Controllers
             });
         }
 
+        // POST: api/user/change-password
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized(new { message = "User not found" });
+            }
 
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { message = "Failed to change password", errors = result.Errors });
+            }
 
+            return Ok(new { message = "Password changed successfully" });
+        }
     }
+}
+
+public class ChangePasswordDto
+{
+    public string CurrentPassword { get; set; }
+    public string NewPassword { get; set; }
 }

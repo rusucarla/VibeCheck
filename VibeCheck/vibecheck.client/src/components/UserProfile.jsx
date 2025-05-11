@@ -10,16 +10,50 @@ import {
     Divider,
     Grid,
     CircularProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getUserInfo } from "../services/authServices";
 import { useThemeContext } from "../context/ThemeContext";
-import TextField from "@mui/material/TextField";
 import { updateUserProfile } from "../services/authServices";
 import { useNavigate } from "react-router-dom";
-
+// import { ChangePasswordDialog } from '../DashboardComponents/ChangePasswordDialog';
+import { changePassword } from '../services/authServices';
+// import ChangePasswordDialog from './ChangePasswordDialog';
+//
+// export const changePassword = async (currentPassword, newPassword) => {
+//     try {
+//         const response = await fetch(`${API_URL_GENERAL}/User/change-password`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             credentials: 'include',
+//             body: JSON.stringify({
+//                 currentPassword,
+//                 newPassword
+//             })
+//         });
+//
+//         const text = await response.text();
+//         console.log('Change password response:', text);
+//
+//         if (!response.ok) {
+//             throw new Error(`Failed to change password: ${response.status} - ${text}`);
+//         }
+//
+//         return text ? JSON.parse(text) : { success: true };
+//     } catch (error) {
+//         console.error('Change password error:', error);
+//         throw error;
+//     }
+// };
 
 const UserProfile = () => {
     const navigate = useNavigate();
@@ -35,6 +69,10 @@ const UserProfile = () => {
     const [topSpotify, setTopSpotify] = useState([]);
     const [topTmdb, setTopTmdb] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -219,6 +257,30 @@ const UserProfile = () => {
             setEditMode(false);
         } catch (error) {
             console.error("Failed to save profile:", error);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('New passwords do not match');
+            return;
+        }
+
+        try {
+            await changePassword(currentPassword, newPassword);
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            setIsPasswordDialogOpen(false);
+            alert('Password changed successfully');
+        } catch (error) {
+            console.error('Failed to change password:', error);
+            alert(error.message);
         }
     };
 
@@ -490,6 +552,7 @@ const UserProfile = () => {
                                         variant="outlined"
                                         startIcon={<LockResetIcon />}
                                         color="warning"
+                                        onClick={() => setIsPasswordDialogOpen(true)}
                                     >
                                         Change Password
                                     </Button>
@@ -571,6 +634,44 @@ const UserProfile = () => {
                     </Card>
                 </Grid>
             </Grid>
+            <Dialog open={isPasswordDialogOpen} onClose={() => setIsPasswordDialogOpen(false)}>
+    <DialogTitle>Change Password</DialogTitle>
+    <DialogContent>
+        <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField
+                type="password"
+                label="Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                fullWidth
+            />
+            <TextField
+                type="password"
+                label="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                fullWidth
+            />
+            <TextField
+                type="password"
+                label="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                fullWidth
+            />
+        </Stack>
+    </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsPasswordDialogOpen(false)}>Cancel</Button>
+                    <Button
+                        onClick={handlePasswordChange}
+                        variant="contained"
+                        disabled={!currentPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword}
+                    >
+                        Change Password
+                    </Button>
+                </DialogActions>
+</Dialog>
         </Box>
     );
 };
