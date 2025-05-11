@@ -21,6 +21,14 @@ export async function getAllCategories(page = 1, pageSize = 9, searchTerm) {
     }
 }
 
+export async function fetchAllCategories() {
+    const response = await fetch(`${API_URL}/all`, {
+        credentials: "include",
+    });
+    if (!response.ok) throw new Error("Failed to fetch all categories");
+    return await response.json();
+}
+
 export async function getCategoryById(id) {
     try {
         const response = await fetch(`${API_URL}/${id}`, {

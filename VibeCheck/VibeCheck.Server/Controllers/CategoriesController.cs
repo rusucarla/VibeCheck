@@ -148,6 +148,20 @@ namespace VibeCheck.Server.Controllers
                 totalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
             });
         }
+        
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new CategoryDTO
+                {
+                    Id = c.Id,
+                    Title = c.Title!
+                })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)

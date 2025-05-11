@@ -11,11 +11,12 @@ import {
     Select,
     OutlinedInput,
     Checkbox,
-    ListItemText
+    ListItemText,
+    Chip,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { getChannelById, updateChannel } from "../../services/channelService";
-import { fetchCategories } from "../../services/categoryService";
+import { fetchAllCategories } from "../../services/categoryService";
 
 function EditChannelPage() {
     const { id } = useParams();
@@ -33,15 +34,15 @@ function EditChannelPage() {
     useEffect(() => {
         const loadData = async () => {
             const channel = await getChannelById(id);
-            const cats = await fetchCategories();
-
+            const cats = await fetchAllCategories();
+            console.log("Loaded categories:", cats);
             setFormData({
                 name: channel.name,
                 description: channel.description,
                 categoryIds: channel.categories.map((c) => c.id)
             });
 
-            setCategories(cats.data || []);
+            setCategories(cats || []);
         };
 
         loadData();
@@ -101,18 +102,48 @@ function EditChannelPage() {
                 />
                 <FormControl fullWidth margin="normal" error={!!error}>
                     <InputLabel>Select Categories</InputLabel>
+                    {/*<Select*/}
+                    {/*    multiple*/}
+                    {/*    name="categoryIds"*/}
+                    {/*    value={formData.categoryIds}*/}
+                    {/*    onChange={handleCategoryChange}*/}
+                    {/*    input={<OutlinedInput label="Select Categories" />}*/}
+                    {/*    renderValue={(selected) =>*/}
+                    {/*        categories*/}
+                    {/*            .filter((c) => selected.includes(c.id))*/}
+                    {/*            .map((c) => c.title)*/}
+                    {/*            .join(", ")*/}
+                    {/*    }*/}
+                    {/*>*/}
+                    {/*    {categories.map((cat) => (*/}
+                    {/*        <MenuItem key={cat.id} value={cat.id}>*/}
+                    {/*            <Checkbox checked={formData.categoryIds.includes(cat.id)} />*/}
+                    {/*            <ListItemText primary={cat.title} />*/}
+                    {/*        </MenuItem>*/}
+                    {/*    ))}*/}
+                    {/*</Select>*/}
                     <Select
                         multiple
                         name="categoryIds"
                         value={formData.categoryIds}
                         onChange={handleCategoryChange}
                         input={<OutlinedInput label="Select Categories" />}
-                        renderValue={(selected) =>
-                            categories
-                                .filter((c) => selected.includes(c.id))
-                                .map((c) => c.title)
-                                .join(", ")
-                        }
+                        renderValue={(selected) => (
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                {selected.map((id) => {
+                                    const cat = categories.find((c) => c.id === id);
+                                    return <Chip key={id} label={cat?.title || id} />;
+                                })}
+                            </Box>
+                        )}
+                        MenuProps={{
+                            PaperProps: {
+                                style: {
+                                    maxHeight: 300,
+                                    overflowY: "auto"
+                                }
+                            }
+                        }}
                     >
                         {categories.map((cat) => (
                             <MenuItem key={cat.id} value={cat.id}>

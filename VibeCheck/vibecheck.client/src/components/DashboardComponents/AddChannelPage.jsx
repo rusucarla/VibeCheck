@@ -10,11 +10,13 @@ import {
     MenuItem,
     OutlinedInput,
     Chip,
-    FormHelperText
+    FormHelperText,
+    Checkbox,
+    ListItemText,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { createChannel } from "../../services/channelService";
-import { fetchCategories } from "../../services/categoryService";
+import {fetchAllCategories} from "../../services/categoryService";
 
 const MAX_CATEGORIES = 5;
 
@@ -30,8 +32,9 @@ function AddChannelPage() {
     useEffect(() => {
         const loadCategories = async () => {
             try {
-                const data = await fetchCategories();
-                setAllCategories(data.data || []);
+                const data = await fetchAllCategories();
+                console.log("Loaded categories:", data);
+                setAllCategories(data || []);
             } catch (err) {
                 console.error("Failed to load categories", err);
             }
@@ -73,6 +76,7 @@ function AddChannelPage() {
                     fullWidth
                     required
                     margin="normal"
+                    inputProps={{ maxLength: 20 }}
                 />
                 <TextField
                     label="Descriere"
@@ -85,11 +89,40 @@ function AddChannelPage() {
 
                 <FormControl fullWidth margin="normal" error={!!error}>
                     <InputLabel id="categories-label">Categorii</InputLabel>
+                    {/*<Select*/}
+                    {/*    labelId="categories-label"*/}
+                    {/*    multiple*/}
+                    {/*    value={selectedCategories}*/}
+                    {/*    onChange={(e) => setSelectedCategories(e.target.value)}*/}
+                    {/*    input={<OutlinedInput label="Categorii" />}*/}
+                    {/*    renderValue={(selected) => (*/}
+                    {/*        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>*/}
+                    {/*            {selected.map((id) => {*/}
+                    {/*                const cat = allCategories.find((c) => c.id === id);*/}
+                    {/*                return <Chip key={id} label={cat?.title || id} />;*/}
+                    {/*            })}*/}
+                    {/*        </Box>*/}
+                    {/*    )}*/}
+                    {/*>*/}
+                    {/*    {allCategories.map((cat) => (*/}
+                    {/*        <MenuItem key={cat.id} value={cat.id}>*/}
+                    {/*            {cat.title}*/}
+                    {/*        </MenuItem>*/}
+                    {/*    ))}*/}
+                    {/*</Select>*/}
                     <Select
                         labelId="categories-label"
                         multiple
                         value={selectedCategories}
-                        onChange={(e) => setSelectedCategories(e.target.value)}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value.length <= MAX_CATEGORIES) {
+                                setSelectedCategories(value);
+                                setError("");
+                            } else {
+                                setError(`You can select up to ${MAX_CATEGORIES} categories.`);
+                            }
+                        }}
                         input={<OutlinedInput label="Categorii" />}
                         renderValue={(selected) => (
                             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -99,10 +132,19 @@ function AddChannelPage() {
                                 })}
                             </Box>
                         )}
+                        MenuProps={{
+                            PaperProps: {
+                                style: {
+                                    maxHeight: 300,
+                                    overflowY: "auto"
+                                }
+                            }
+                        }}
                     >
                         {allCategories.map((cat) => (
                             <MenuItem key={cat.id} value={cat.id}>
-                                {cat.title}
+                                <Checkbox checked={selectedCategories.includes(cat.id)} />
+                                <ListItemText primary={cat.title} />
                             </MenuItem>
                         ))}
                     </Select>
