@@ -98,3 +98,24 @@ export async function deleteChannel(id) {
         throw error;
     }
 }
+
+export async function getUserChannels() {
+    try {
+        const response = await fetch(
+            `${API_URL}/subscribed`,
+            {
+                method: "GET",
+                credentials: "include",
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch user channels");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching user channels:", error);
+        return null;
+    }
+}

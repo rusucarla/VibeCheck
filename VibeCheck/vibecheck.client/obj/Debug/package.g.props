@@ -14,6 +14,7 @@
     <PackageJsonDependenciesFontsourceMontserrat Condition="$(PackageJsonDependenciesFontsourceMontserrat) == ''">^5.2.5</PackageJsonDependenciesFontsourceMontserrat>
     <PackageJsonDependenciesFontsourceRoboto Condition="$(PackageJsonDependenciesFontsourceRoboto) == ''">^5.2.5</PackageJsonDependenciesFontsourceRoboto>
     <PackageJsonDependenciesMuiIconsMaterial Condition="$(PackageJsonDependenciesMuiIconsMaterial) == ''">^6.4.7</PackageJsonDependenciesMuiIconsMaterial>
+    <PackageJsonDependenciesMuiJoy Condition="$(PackageJsonDependenciesMuiJoy) == ''">^5.0.0-beta.52</PackageJsonDependenciesMuiJoy>
     <PackageJsonDependenciesMuiMaterial Condition="$(PackageJsonDependenciesMuiMaterial) == ''">^6.4.7</PackageJsonDependenciesMuiMaterial>
     <PackageJsonDependenciesDotenv Condition="$(PackageJsonDependenciesDotenv) == ''">^16.5.0</PackageJsonDependenciesDotenv>
     <PackageJsonDependenciesReact Condition="$(PackageJsonDependenciesReact) == ''">^19.0.0</PackageJsonDependenciesReact>

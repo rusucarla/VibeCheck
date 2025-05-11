@@ -16,11 +16,13 @@ import EditCategoryPage from "./components/DashboardComponents/EditCategoryPage"
 import ChannelsPage from "./components/DashboardComponents/ChannelsPage";
 import UserProfile from "./components/UserProfile.jsx";
 import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
-
+import { CssVarsProvider } from '@mui/joy/styles';
 import TestUI from "./TestUI";
 import TestUIButton from "./components/ui/TestUIButton";
 import AddChannelPage from "@/components/DashboardComponents/AddChannelPage.jsx";
 import EditChannelPage from "@/components/DashboardComponents/EditChannelPage.jsx";
+import SearchSpotifyTab from "@/components/DashboardComponents/SearchSpotifyTab.jsx";
+import SearchTmdbTab from "@/components/DashboardComponents/SearchTMDBTab.jsx";
 
 function ThemeToggle() {
     const { darkMode, toggleTheme } = useThemeContext();
@@ -67,6 +69,8 @@ function AppRoutes() {
                             <Route path="categories/edit/:id" element={<EditCategoryPage />} />
                             <Route path="channels/new" element={<AddChannelPage />} />
                             <Route path="channels/edit/:id" element={<EditChannelPage />} />
+                            <Route path="search/spotify" element={<SearchSpotifyTab />} />
+                            <Route path="search/tmdb" element={<SearchTmdbTab />} />
                             {/*<Route path="channels" element={<Channels />} />*/}
                             {/*<Route path="inbox" element={<Inbox />} />*/}
                         </Route>

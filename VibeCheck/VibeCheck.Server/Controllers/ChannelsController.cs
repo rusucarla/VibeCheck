@@ -88,6 +88,43 @@ namespace VibeCheck.Server.Controllers
             return Ok(dto);
         }
         
+        [HttpGet("subscribed")]
+        public async Task<IActionResult> GetUserChannels()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var userChannelIds = await _context.BindChannelUserEntries
+                .Where(b => b.UserId == user.Id)
+                .Select(b => b.ChannelId)
+                .ToListAsync();
+
+            var channels = await _context.Channels
+                .Include(c => c.BindCategoryChannels!)
+                .ThenInclude(bcc => bcc.Category)
+                .Where(c => userChannelIds.Contains(c.Id))
+                .Select(c => new ChannelDTO
+                {
+                    Id = c.Id,
+                    Name = c.Name!,
+                    Description = c.Description!,
+                    Categories = c.BindCategoryChannels
+                        .Select(bcc => new CategoryDTO
+                        {
+                            Id = bcc.CategoryId,
+                            Title = bcc.Category!.Title!
+                        }).ToList()
+                })
+                .ToListAsync();
+
+            Console.WriteLine($"[GetUserChannels] Found {channels.Count} channels for user {user.Id}");
+
+            return Ok(new
+            {
+                data = channels
+            });
+        }
+        
         [HttpPost]
         public async Task<IActionResult> CreateChannel([FromBody] ChannelCreateDTO dto)
         {
@@ -260,7 +297,7 @@ namespace VibeCheck.Server.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-
+    
 
         /*// GET api/channels?page=1&pageSize=10&search=chat
         [HttpGet]

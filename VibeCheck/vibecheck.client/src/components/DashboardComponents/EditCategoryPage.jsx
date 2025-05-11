@@ -1,135 +1,94 @@
 import { useEffect, useState } from "react";
-import {
-    getAllCategories,
-    deleteCategory
-} from "../../services/categoryService";
+import { useParams, useNavigate } from "react-router-dom";
+import { getCategoryById, updateCategory } from "../../services/categoryService";
 import {
     Box,
     Typography,
     Button,
-    IconButton,
-    Pagination,
-    Grid,
-    Stack,
-    TextField
+    TextField,
+    Paper,
+    Stack
 } from "@mui/material";
-import { Add, Delete, Edit } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
 
-function CategoriesPage() {
-    const [categories, setCategories] = useState([]);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [search, setSearch] = useState("");
-    const pageSize = 9;
+function EditCategoryPage() {
+    const { id } = useParams();
     const navigate = useNavigate();
-
-    const loadCategories = async (currentPage, searchTerm = "") => {
-        const result = await getAllCategories(currentPage, pageSize, searchTerm);
-        if (result) {
-            setCategories(result.data || []);
-            setTotalPages(result.totalPages || 1);
-        }
-    };
+    const [category, setCategory] = useState({
+        title: ""
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        loadCategories(page, search);
-    }, [page]);
+        const fetchCategory = async () => {
+            try {
+                const data = await getCategoryById(id);
+                if (data) {
+                    setCategory({ title: data.title });
+                }
+            } catch (err) {
+                setError("Failed to load category");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const handlePageChange = (_, newPage) => {
-        setPage(newPage);
+        fetchCategory();
+    }, [id]);
+
+    const handleChange = (e) => {
+        setCategory({ ...category, [e.target.name]: e.target.value });
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm("You sure you want to delete this category?")) {
-            try {
-                await deleteCategory(id);
-                loadCategories(page, search);
-            } catch (error) {
-                console.error("Error when trying to delete:", error.message);
-            }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await updateCategory(id, category);
+            navigate("/dashboard/categories");
+        } catch (err) {
+            setError("Failed to update category");
+            console.error(err);
         }
     };
 
-    const handleSearchSubmit = (e) => {
-        e.preventDefault();
-        setPage(1); // reset pagina cand se face un nou search
-        loadCategories(1, search);
-    };
+    if (loading) return <Typography>Loading...</Typography>;
+    if (error) return <Typography color="error">{error}</Typography>;
 
     return (
         <Box>
-            <Typography variant="h4" gutterBottom>
-                Categorii disponibile
-            </Typography>
-
-            {/* Rand cu Add si Search */}
-            <Stack direction="row" spacing={2} mb={3} alignItems="center">
-                <Button variant="contained" startIcon={<Add />} onClick={() => navigate(`/dashboard/categories/new/`)}>
-                    Add categorie
-                </Button>
-                <form onSubmit={handleSearchSubmit}>
-                    <TextField
-                        label="Cauta categorii"
-                        variant="outlined"
-                        size="small"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </form>
-            </Stack>
-
-            {/* Carduri pentru categorii */}
-            <Grid container spacing={2}>
-                {categories.map((cat) => (
-                    <Grid item xs={12} sm={6} md={4} key={cat.id}>
-                        <Box
-                            sx={{
-                                p: 2,
-                                border: "1px solid",
-                                borderRadius: "8px",
-                                textAlign: "center",
-                                backgroundColor: "background.paper",
-                                position: "relative"
-                            }}
-                        >
-                            <Typography variant="h6">{cat.title}</Typography>
-
-                            {/* Butoane Edit / Delete */}
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    top: 5,
-                                    right: 5,
-                                    display: "flex",
-                                    gap: 1
-                                }}
+            <Typography variant="h4" gutterBottom>Edit Category</Typography>
+            <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
+                <form onSubmit={handleSubmit}>
+                    <Stack spacing={3}>
+                        <TextField
+                            label="Title"
+                            name="title"
+                            value={category.title}
+                            onChange={handleChange}
+                            fullWidth
+                            required
+                        />
+                        <Stack direction="row" spacing={2} justifyContent="flex-end">
+                            <Button
+                                variant="outlined"
+                                onClick={() => navigate("/dashboard/categories")}
                             >
-                                <IconButton onClick={() => navigate(`/dashboard/categories/edit/${cat.id}`)} size="small">
-                                    <Edit fontSize="small" />
-                                </IconButton>
-                                <IconButton onClick={() => handleDelete(cat.id)} size="small">
-                                    <Delete fontSize="small" />
-                                </IconButton>
-                            </Box>
-                        </Box>
-                    </Grid>
-                ))}
-            </Grid>
-
-            {/* Paginare */}
-            <Stack spacing={2} alignItems="center" mt={4}>
-                <Pagination
-                    count={totalPages}
-                    page={page}
-                    onChange={handlePageChange}
-                    color="primary"
-                    variant="outlined"
-                    shape="rounded"
-                />
-            </Stack>
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                            >
+                                Update
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </form>
+            </Paper>
         </Box>
     );
 }
 
-export default CategoriesPage;
+export default EditCategoryPage;
