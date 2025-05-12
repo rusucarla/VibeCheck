@@ -21,6 +21,8 @@ namespace VibeCheck.Server.Models
         public byte[]? ProfilePicture { get; set; } // pentru fisier binar
         public string? ProfilePictureContentType { get; set; } // ex: image/png
 
+        // data la care a fost creat user-ul
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     }
 }
