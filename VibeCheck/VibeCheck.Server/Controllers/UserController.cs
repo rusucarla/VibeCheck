@@ -192,6 +192,37 @@ namespace VibeCheck.Server.Controllers
             });
         }
 
+        //poza profi
+        // POST: api/user/upload-profile-picture
+        [Authorize]
+        [HttpPost("upload-profile-picture")]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || file == null || file.Length == 0)
+                return BadRequest("Invalid file.");
+
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+            user.ProfilePicture = ms.ToArray();
+            user.ProfilePictureContentType = file.ContentType;
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new { message = "Profile picture uploaded successfully." });
+        }
+
+        // GET: api/user/profile-picture
+        [Authorize]
+        [HttpGet("profile-picture")]
+        public async Task<IActionResult> GetProfilePicture()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user?.ProfilePicture == null)
+                return NotFound();
+
+            return File(user.ProfilePicture, user.ProfilePictureContentType ?? "image/jpeg");
+        }
         // POST: api/user/change-password
         [Authorize]
         [HttpPost("change-password")]

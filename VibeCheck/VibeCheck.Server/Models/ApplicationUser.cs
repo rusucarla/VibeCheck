@@ -17,6 +17,10 @@ namespace VibeCheck.Server.Models
         public virtual ICollection<TopTmdb>? TopTmdbItems { get; set; }
         
         public virtual ICollection<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
+        // incer poza de profil  aparent e si o pb cu bd 
+        public byte[]? ProfilePicture { get; set; } // pentru fisier binar
+        public string? ProfilePictureContentType { get; set; } // ex: image/png
+
 
     }
 }
