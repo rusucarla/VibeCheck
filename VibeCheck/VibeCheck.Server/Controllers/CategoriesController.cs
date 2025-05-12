@@ -149,6 +149,7 @@ namespace VibeCheck.Server.Controllers
             });
         }
         
+        [AllowAnonymous] // overrides the Admin role requirement for this endpoint
         [HttpGet("all")]
         public async Task<IActionResult> GetAllCategories()
         {

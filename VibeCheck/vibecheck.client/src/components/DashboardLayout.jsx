@@ -181,7 +181,7 @@ import {
     ChevronLeft,
     ChevronRight,
     MusicNote,
-    Movie as MovieIcon
+    Movie as MovieIcon, Inbox
 } from "@mui/icons-material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getUserRole, logout } from "../services/authServices";
@@ -354,6 +354,30 @@ function DashboardLayout() {
                             whiteSpace: "nowrap"
                         }}>
                             Canale
+                        </Box>
+                    </Box>
+
+                    <Box
+                        component="div"
+                        onClick={() => navigate("/dashboard/requests/inbox")}
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            px: 2,
+                            py: 1.5,
+                            cursor: "pointer",
+                            "&:hover": {
+                                bgcolor: darkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)"
+                            }
+                        }}
+                    >
+                        <Inbox sx={{ mr: 2, color: theme.palette.primary.main }} />
+                        <Box sx={{
+                            opacity: open ? 1 : 0,
+                            transition: "opacity 0.2s",
+                            whiteSpace: "nowrap"
+                        }}>
+                            Inbox
                         </Box>
                     </Box>
 

@@ -22,11 +22,24 @@ export async function getAllCategories(page = 1, pageSize = 9, searchTerm) {
 }
 
 export async function fetchAllCategories() {
-    const response = await fetch(`${API_URL}/all`, {
-        credentials: "include",
-    });
-    if (!response.ok) throw new Error("Failed to fetch all categories");
-    return await response.json();
+    try {
+        const response = await fetch(`${API_URL}/all`, {
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            console.error("Failed to fetch categories, status:", response.status);
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            throw new Error("Failed to fetch all categories");
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error in fetchAllCategories:", error);
+        return [];
+    }
 }
 
 export async function getCategoryById(id) {

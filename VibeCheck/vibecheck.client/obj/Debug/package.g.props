@@ -16,6 +16,7 @@
     <PackageJsonDependenciesMuiIconsMaterial Condition="$(PackageJsonDependenciesMuiIconsMaterial) == ''">^6.4.7</PackageJsonDependenciesMuiIconsMaterial>
     <PackageJsonDependenciesMuiJoy Condition="$(PackageJsonDependenciesMuiJoy) == ''">^5.0.0-beta.52</PackageJsonDependenciesMuiJoy>
     <PackageJsonDependenciesMuiMaterial Condition="$(PackageJsonDependenciesMuiMaterial) == ''">^6.4.7</PackageJsonDependenciesMuiMaterial>
+    <PackageJsonDependenciesDateFns Condition="$(PackageJsonDependenciesDateFns) == ''">^4.1.0</PackageJsonDependenciesDateFns>
     <PackageJsonDependenciesDotenv Condition="$(PackageJsonDependenciesDotenv) == ''">^16.5.0</PackageJsonDependenciesDotenv>
     <PackageJsonDependenciesReact Condition="$(PackageJsonDependenciesReact) == ''">^19.0.0</PackageJsonDependenciesReact>
     <PackageJsonDependenciesReactDom Condition="$(PackageJsonDependenciesReactDom) == ''">^19.0.0</PackageJsonDependenciesReactDom>

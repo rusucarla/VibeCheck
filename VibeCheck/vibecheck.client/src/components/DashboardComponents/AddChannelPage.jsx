@@ -34,9 +34,17 @@ function AddChannelPage() {
             try {
                 const data = await fetchAllCategories();
                 console.log("Loaded categories:", data);
-                setAllCategories(data || []);
+                if (Array.isArray(data)) {
+                    setAllCategories(data);
+                } else {
+                    console.error("Expected array of categories but got:", data);
+                    setError("Failed to load categories properly");
+                    setAllCategories([]);
+                }
             } catch (err) {
                 console.error("Failed to load categories", err);
+                setError("Failed to load categories. Please try again later.");
+                setAllCategories([]);
             }
         };
         loadCategories();

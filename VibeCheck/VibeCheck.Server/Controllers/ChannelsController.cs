@@ -94,35 +94,40 @@ namespace VibeCheck.Server.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            var userChannelIds = await _context.BindChannelUserEntries
+            // Get user's channel memberships with their roles
+            var userChannelMemberships = await _context.BindChannelUserEntries
                 .Where(b => b.UserId == user.Id)
-                .Select(b => b.ChannelId)
+                .Select(b => new { b.ChannelId, b.Role })
                 .ToListAsync();
+
+            var channelIds = userChannelMemberships.Select(m => m.ChannelId).ToList();
 
             var channels = await _context.Channels
                 .Include(c => c.BindCategoryChannels!)
                 .ThenInclude(bcc => bcc.Category)
-                .Where(c => userChannelIds.Contains(c.Id))
-                .Select(c => new ChannelDTO
+                .Where(c => channelIds.Contains(c.Id))
+                .ToListAsync();
+
+            var channelDTOs = channels.Select(c => {
+                var membership = userChannelMemberships.First(m => m.ChannelId == c.Id);
+                return new ChannelDTO
                 {
                     Id = c.Id,
                     Name = c.Name!,
                     Description = c.Description!,
+                    UserRole = membership.Role, // Include the user's role in this channel
                     Categories = c.BindCategoryChannels
                         .Select(bcc => new CategoryDTO
                         {
                             Id = bcc.CategoryId,
                             Title = bcc.Category!.Title!
                         }).ToList()
-                })
-                .ToListAsync();
+                };
+            }).ToList();
 
-            Console.WriteLine($"[GetUserChannels] Found {channels.Count} channels for user {user.Id}");
+            Console.WriteLine($"[GetUserChannels] Found {channelDTOs.Count} channels for user {user.Id}");
 
-            return Ok(new
-            {
-                data = channels
-            });
+            return Ok(new { data = channelDTOs });
         }
         
         [HttpPost]
@@ -179,6 +184,161 @@ namespace VibeCheck.Server.Controllers
             return CreatedAtAction(nameof(GetChannel), new { id = channel.Id }, new { channel.Id });
         }
         
+        // POST: api/channels/{channelId}/join-request
+        [HttpPost("{channelId}/join-request")]
+        public async Task<IActionResult> RequestToJoinChannel(int channelId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Check if channel exists
+            var channel = await _context.Channels.FindAsync(channelId);
+            if (channel == null)
+                return NotFound(new { message = "Channel not found" });
+
+            // Check if user is already a member of this channel
+            var existingMembership = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == channelId && b.UserId == user.Id);
+
+            if (existingMembership)
+                return BadRequest(new { message = "You are already a member of this channel" });
+
+            // Check if user already has a pending request
+            var pendingRequest = await _context.BindRequestChannelUserEntries
+                .AnyAsync(b => b.ChannelId == channelId && b.UserId == user.Id && b.Status == "Pending");
+
+            if (pendingRequest)
+                return BadRequest(new { message = "You already have a pending request for this channel" });
+
+            // Create join request
+            var request = new Request
+            {
+                RequestType = "JoinChannel",
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Requests.Add(request);
+            await _context.SaveChangesAsync();
+
+            // Create binding between request, channel and user
+            var binding = new BindRequestChannelUser
+            {
+                ChannelId = channelId,
+                UserId = user.Id,
+                RequestId = request.Id,
+                Status = "Pending"
+            };
+            _context.BindRequestChannelUserEntries.Add(binding);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Join request sent successfully" });
+        }
+
+        // GET: api/channels/admin/pending-requests
+        [HttpGet("admin/pending-requests")]
+        public async Task<IActionResult> GetPendingRequestsForAdminChannels()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Get channels where the user is an admin
+            var adminChannelIds = await _context.BindChannelUserEntries
+                .Where(b => b.UserId == user.Id && b.Role == "Admin")
+                .Select(b => b.ChannelId)
+                .ToListAsync();
+
+            if (!adminChannelIds.Any())
+                return Ok(new { data = new List<object>() });
+
+            // Get pending join requests for those channels
+            var pendingRequests = await _context.BindRequestChannelUserEntries
+                .Include(b => b.Request)
+                .Include(b => b.User)
+                .Include(b => b.Channel)
+                .Where(b => adminChannelIds.Contains(b.ChannelId) && 
+                            b.Status == "Pending" && 
+                            b.Request.RequestType == "JoinChannel")
+                .Select(b => new
+                {
+                    RequestId = b.RequestId,
+                    ChannelId = b.ChannelId,
+                    ChannelName = b.Channel.Name,
+                    UserId = b.UserId,
+                    UserName = b.User.UserName,
+                    CreatedAt = b.Request.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(new { data = pendingRequests });
+        }
+
+        // POST: api/channels/requests/{requestId}/approve
+        [HttpPost("requests/{requestId}/approve")]
+        public async Task<IActionResult> ApproveJoinRequest(int requestId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Find the request binding
+            var requestBinding = await _context.BindRequestChannelUserEntries
+                .Include(b => b.Request)
+                .FirstOrDefaultAsync(b => b.RequestId == requestId && b.Status == "Pending");
+
+            if (requestBinding == null)
+                return NotFound(new { message = "Request not found or already processed" });
+
+            // Check if the current user is an admin of the channel
+            var isAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == requestBinding.ChannelId && b.UserId == user.Id && b.Role == "Admin");
+
+            if (!isAdmin)
+                return Forbid();
+
+            // Update request status
+            requestBinding.Status = "Approved";
+            requestBinding.Request.ProcessedAt = DateTime.UtcNow;
+
+            // Add user to channel as a regular member
+            _context.BindChannelUserEntries.Add(new BindChannelUser
+            {
+                ChannelId = requestBinding.ChannelId,
+                UserId = requestBinding.UserId,
+                Role = "Member"
+            });
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Join request approved" });
+        }
+
+        // POST: api/channels/requests/{requestId}/reject
+        [HttpPost("requests/{requestId}/reject")]
+        public async Task<IActionResult> RejectJoinRequest(int requestId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Find the request binding
+            var requestBinding = await _context.BindRequestChannelUserEntries
+                .Include(b => b.Request)
+                .FirstOrDefaultAsync(b => b.RequestId == requestId && b.Status == "Pending");
+
+            if (requestBinding == null)
+                return NotFound(new { message = "Request not found or already processed" });
+
+            // Check if the current user is an admin of the channel
+            var isAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == requestBinding.ChannelId && b.UserId == user.Id && b.Role == "Admin");
+
+            if (!isAdmin)
+                return Forbid();
+
+            // Update request status
+            requestBinding.Status = "Rejected";
+            requestBinding.Request.ProcessedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Join request rejected" });
+        }
+        
         // [HttpPut("{id:int}")]
         // public async Task<IActionResult> UpdateChannel(int id, [FromBody] ChannelCreateDTO dto)
         // {
@@ -230,6 +390,9 @@ namespace VibeCheck.Server.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateChannel(int id, [FromBody] ChannelCreateDTO dto)
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+            
             Console.WriteLine($"[UpdateChannel] Called for channel ID: {id}");
 
             var channel = await _context.Channels
@@ -241,6 +404,15 @@ namespace VibeCheck.Server.Controllers
                 Console.WriteLine($"[UpdateChannel] Channel {id} not found.");
                 return NotFound();
             }
+            
+            // Check if user is channel admin or global admin
+            var isChannelAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == id && b.UserId == user.Id && b.Role == "Admin");
+    
+            var isGlobalAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            if (!isChannelAdmin && !isGlobalAdmin)
+                return Forbid();
 
             if (dto.CategoryIds == null || dto.CategoryIds.Count < 1 || dto.CategoryIds.Count > 5)
             {
@@ -290,12 +462,60 @@ namespace VibeCheck.Server.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteChannel(int id)
         {
+            
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
             var ch = await _context.Channels.FindAsync(id);
             if (ch == null) return NotFound();
+            
+            // Check if user is channel admin or global admin
+            var isChannelAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == id && b.UserId == user.Id && b.Role == "Admin");
+    
+            var isGlobalAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            if (!isChannelAdmin && !isGlobalAdmin)
+                return Forbid();
 
             _context.Channels.Remove(ch);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+        
+        // POST: api/channels/{channelId}/leave
+        [HttpPost("{channelId}/leave")]
+        public async Task<IActionResult> LeaveChannel(int channelId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Check if channel exists
+            var channel = await _context.Channels.FindAsync(channelId);
+            if (channel == null)
+                return NotFound(new { message = "Channel not found" });
+
+            // Check if user is a member of this channel
+            var membership = await _context.BindChannelUserEntries
+                .FirstOrDefaultAsync(b => b.ChannelId == channelId && b.UserId == user.Id);
+
+            if (membership == null)
+                return BadRequest(new { message = "You are not a member of this channel" });
+
+            // Check if user is the only admin of the channel
+            if (membership.Role == "Admin")
+            {
+                var adminCount = await _context.BindChannelUserEntries
+                    .CountAsync(b => b.ChannelId == channelId && b.Role == "Admin");
+        
+                if (adminCount == 1)
+                    return BadRequest(new { message = "You cannot leave as you are the only admin of this channel" });
+            }
+
+            // Remove user from channel
+            _context.BindChannelUserEntries.Remove(membership);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "You have left the channel successfully" });
         }
     
 

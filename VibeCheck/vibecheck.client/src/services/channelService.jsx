@@ -119,3 +119,130 @@ export async function getUserChannels() {
         return null;
     }
 }
+export async function requestToJoinChannel(channelId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/join-request`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to send join request");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error requesting to join channel:", error);
+        throw error;
+    }
+}
+
+export async function getPendingRequests() {
+    try {
+        const response = await fetch(`${API_URL}/admin/pending-requests`, {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch pending requests");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching pending join requests:", error);
+        return { data: [] };
+    }
+}
+
+export async function approveJoinRequest(requestId) {
+    try {
+        const response = await fetch(`${API_URL}/requests/${requestId}/approve`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to approve join request");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error approving join request:", error);
+        throw error;
+    }
+}
+
+export async function rejectJoinRequest(requestId) {
+    try {
+        const response = await fetch(`${API_URL}/requests/${requestId}/reject`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to reject join request");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error rejecting join request:", error);
+        throw error;
+    }
+}
+
+export async function getUserRole() {
+    try {
+        const response = await fetch("https://localhost:7253/api/User/role", {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to get user role");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error getting user role:", error);
+        return { roles: [] };
+    }
+}
+
+export async function checkChannelAdminAccess(channelId) {
+    try {
+        // Get subscribed channels
+        const userChannels = await getUserChannels();
+        const isChannelAdmin = userChannels?.data?.some(
+            channel => channel.id === channelId && channel.userRole === "Admin"
+        );
+
+        // Get global role
+        const userRoles = await getUserRole();
+        const isGlobalAdmin = userRoles?.roles?.includes("Admin");
+
+        return isChannelAdmin || isGlobalAdmin;
+    } catch (error) {
+        console.error("Error checking admin access:", error);
+        return false;
+    }
+}
+export async function leaveChannel(channelId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/leave`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to leave channel");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error leaving channel:", error);
+        throw error;
+    }
+}

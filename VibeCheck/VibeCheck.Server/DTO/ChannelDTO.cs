@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string Name { get; set; } = String.Empty;
         public string Description { get; set; } = String.Empty;
+        public string UserRole { get; set; } = String.Empty;
         public List<CategoryDTO> Categories { get; set; } = new();
     }
 }

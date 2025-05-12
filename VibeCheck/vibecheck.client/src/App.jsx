@@ -23,6 +23,9 @@ import AddChannelPage from "@/components/DashboardComponents/AddChannelPage.jsx"
 import EditChannelPage from "@/components/DashboardComponents/EditChannelPage.jsx";
 import SearchSpotifyTab from "@/components/DashboardComponents/SearchSpotifyTab.jsx";
 import SearchTmdbTab from "@/components/DashboardComponents/SearchTMDBTab.jsx";
+import RequestsInboxPage from "@/components/DashboardComponents/RequestInboxPage.jsx";
+import DashboardHomePage from "@/components/DashboardComponents/DashboardHomePage.jsx";
+import ChannelViewPage from "@/components/DashboardComponents/ChannelView/ChannelViewPage.jsx";
 
 function ThemeToggle() {
     const { darkMode, toggleTheme } = useThemeContext();
@@ -61,6 +64,7 @@ function AppRoutes() {
                         <Route path="/test-ui" element={<TestUI />} />
                         {/* Dashboard cu subpagini */}
                         <Route path="/dashboard" element={<DashboardLayout />}>
+                            <Route index element={<DashboardHomePage />} />
                             <Route path="admin" element={<AdminPanel />} />
                             <Route path="channels" element={<ChannelsPage />} />
                             <Route path="categories" element={<CategoriesPage />} />
@@ -69,8 +73,12 @@ function AppRoutes() {
                             <Route path="categories/edit/:id" element={<EditCategoryPage />} />
                             <Route path="channels/new" element={<AddChannelPage />} />
                             <Route path="channels/edit/:id" element={<EditChannelPage />} />
+                            <Route path="channel/:id" element={<ChannelViewPage />} />
+                            <Route path="channel/:id/recommendations" element={<ChannelViewPage />} />
                             <Route path="search/spotify" element={<SearchSpotifyTab />} />
                             <Route path="search/tmdb" element={<SearchTmdbTab />} />
+                            <Route path="/dashboard/requests/inbox" element={<RequestsInboxPage />} />
+                            
                             {/*<Route path="channels" element={<Channels />} />*/}
                             {/*<Route path="inbox" element={<Inbox />} />*/}
                         </Route>
