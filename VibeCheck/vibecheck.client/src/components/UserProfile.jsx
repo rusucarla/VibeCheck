@@ -68,11 +68,15 @@ const UserProfile = () => {
     });
     const [topSpotify, setTopSpotify] = useState([]);
     const [topTmdb, setTopTmdb] = useState([]);
+    //am adaugat asta ca sa nu dau refresh
     const [isLoading, setIsLoading] = useState(true);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
+
+
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -294,152 +298,7 @@ const UserProfile = () => {
     // const textColor = darkMode ? "#fff" : "#000";
     const secondaryText = darkMode ? "#b0b0b0" : "textSecondary";
 
-    // return (
-    //     <Box
-    //         sx={{
-    //             display: "flex",
-    //             justifyContent: "center",
-    //             alignItems: "center",
-    //             //minHeight: "100vh",
-    //             backgroundColor: backgroundColor,
-    //             transition: "all 0.3s ease",
-    //             padding: 2,
-    //         }}
-    //     >
-    //         <Card
-    //             sx={{
-    //                 width: "100%",
-    //                 maxWidth: 420,
-    //                 padding: 4,
-    //                 boxShadow: "0 6px 24px rgba(0,0,0,0.1)",
-    //                 borderRadius: "20px",
-    //                 backgroundColor: cardColor,
-    //                 transition: "all 0.3s ease",
-    //             }}
-    //         >
-    //             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-    //                 {editMode ? (
-    //                     <>
-    //                         <label htmlFor="avatar-upload">
-    //                             <input
-    //                                 id="avatar-upload"
-    //                                 type="file"
-    //                                 accept="image/*"
-    //                                 style={{ display: "none" }}
-    //                                 onChange={handleAvatarChange}
-    //                             />
-    //                             <Avatar
-    //                                 src={
-    //                                     formData.avatar
-    //                                         ? URL.createObjectURL(formData.avatar)
-    //                                         : avatarUrl
-    //                                 }
-    //                                 alt="Profile Picture"
-    //                                 sx={{ width: 100, height: 100, mb: 2, cursor: "pointer" }}
-    //                             />
-    //                         </label>
-    //                         <TextField
-    //                             fullWidth
-    //                             label="userName"
-    //                             name="userName"
-    //                             value={formData.userName}
-    //                             onChange={handleChange}
-    //                             sx={{ mb: 2 }}
-    //                         />
-    //                         <TextField
-    //                             fullWidth
-    //                             label="email"
-    //                             name="email"
-    //                             value={formData.email}
-    //                             onChange={handleChange}
-    //                             sx={{ mb: 2 }}
-    //                         />
-    //                         <TextField
-    //                             fullWidth
-    //                             label="Phone Number"
-    //                             name="phoneNumber"
-    //                             value={formData.phoneNumber}
-    //                             onChange={handleChange}
-    //                         />
-    //                     </>
-    //                 ) : (
-    //                     <>
-    //                         <Avatar
-    //                             src={user.avatarUrl || avatarUrl}
-    //                             alt={user.name}
-    //                             sx={{ width: 100, height: 100, marginBottom: 2 }}
-    //                         />
-    //                         <Typography variant="h5" sx={{ color: "#1976d2", fontWeight: 600 }}>
-    //                             <strong>Name: </strong>{user.userName}
-    //                         </Typography>
-    //                         <Typography variant="body2" color={secondaryText} gutterBottom>
-    //                             <strong>Email: </strong>{user.email}
-    //                         </Typography>
-    //                         <Typography variant="body2" color={secondaryText}>
-    //                             <strong>Phone: </strong> {user.phoneNumber || "N/A"}
-    //                         </Typography>
-    //                     </>
-    //                 )}
-    //
-    //             </Box>
-    //
-    //             <Divider sx={{ marginY: 3 }} />
-    //
-    //             <Stack spacing={1.5}>
-    //                 {editMode ? (
-    //                     <>
-    //                         <Button variant="contained" onClick={handleSave} fullWidth>
-    //                             Save Changes
-    //                         </Button>
-    //                         <Button
-    //                             variant="outlined"
-    //                             onClick={() => setEditMode(false)}
-    //                             fullWidth
-    //                         >
-    //                             Cancel
-    //                         </Button>
-    //                     </>
-    //                 ) : (
-    //                     <>
-    //                         <Button
-    //                             variant="contained"
-    //                             color="primary"
-    //                             startIcon={<EditIcon />}
-    //                             onClick={() => setEditMode(true)}
-    //                             fullWidth
-    //                         >
-    //                             Edit Profile
-    //                         </Button>
-    //                         <Button
-    //                             variant="outlined"
-    //                             color="secondary"
-    //                             startIcon={<LockResetIcon />}
-    //                             onClick={() => alert("Change Password clicked")}
-    //                             fullWidth
-    //                         >
-    //                             Change Password
-    //                         </Button>
-    //                         <Button
-    //                             variant="text"
-    //                             color="error"
-    //                             startIcon={<DeleteIcon />}
-    //                             onClick={() => alert("Delete Account clicked")}
-    //                             fullWidth
-    //                             sx={{
-    //                                 "&:hover": {
-    //                                     backgroundColor: darkMode ? "#2c2c2c" : "#ffebee",
-    //                                 },
-    //                             }}
-    //                         >
-    //                             Delete Account
-    //                         </Button>
-    //                     </>
-    //                 )}
-    //             </Stack>
-    //
-    //         </Card>
-    //     </Box>
-    // );
+
     return (
         <Box sx={{ py: 4 }}>
             <Typography variant="h4" sx={{ mb: 4 }}>My Profile</Typography>
@@ -451,15 +310,50 @@ const UserProfile = () => {
                         <CardContent>
                             <Stack direction="column" spacing={3} alignItems="center">
                                 <Avatar
+                                    src={`https://localhost:7253/api/user/profile-picture?${avatarTimestamp}`}
                                     sx={{
                                         width: 120,
                                         height: 120,
-                                        bgcolor: darkMode ? "primary.dark" : "primary.main",
                                         fontSize: 48
                                     }}
-                                >
-                                    {user.userName?.charAt(0).toUpperCase()}
-                                </Avatar>
+                                />
+                                <label htmlFor="upload-avatar">
+                                    <input
+                                        accept="image/*"
+                                        id="upload-avatar"
+                                        type="file"
+                                        style={{ display: "none" }}
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+
+                                            const formData = new FormData();
+                                            formData.append("file", file);
+
+                                            const res = await fetch("https://localhost:7253/api/user/upload-profile-picture", {
+                                                method: "POST",
+                                                credentials: "include",
+                                                body: formData
+                                            });
+
+                                            if (res.ok) {
+                                                setAvatarTimestamp(Date.now());
+                                            } else {
+                                                console.error("Failed to upload profile picture");
+                                            }
+                                        }}
+                                    />
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        component="span"
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Change Photo
+                                    </Button>
+                                </label>
+
+
 
                                 {editMode ? (
                                     <Box component="form" sx={{ width: "100%" }}>
