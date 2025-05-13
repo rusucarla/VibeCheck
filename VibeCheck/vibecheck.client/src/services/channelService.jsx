@@ -119,6 +119,7 @@ export async function getUserChannels() {
         return null;
     }
 }
+
 export async function requestToJoinChannel(channelId) {
     try {
         const response = await fetch(`${API_URL}/${channelId}/join-request`, {
@@ -228,6 +229,7 @@ export async function checkChannelAdminAccess(channelId) {
         return false;
     }
 }
+
 export async function leaveChannel(channelId) {
     try {
         const response = await fetch(`${API_URL}/${channelId}/leave`, {
@@ -244,5 +246,62 @@ export async function leaveChannel(channelId) {
     } catch (error) {
         console.error("Error leaving channel:", error);
         throw error;
+    }
+}
+
+export async function getChannelMessages(channelId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/messages`, {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch channel messages");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching channel messages:", error);
+        throw error;
+    }
+}
+
+export async function sendMessage(channelId, messageData) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/messages`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(messageData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to send message: ${errorText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error sending message:", error);
+        throw error;
+    }
+}
+
+export async function getCurrentUserInfo() {
+    try {
+        const response = await fetch("https://localhost:7253/api/User/info", {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch user info");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+        return null;
     }
 }

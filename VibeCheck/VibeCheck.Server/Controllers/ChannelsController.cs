@@ -517,7 +517,77 @@ namespace VibeCheck.Server.Controllers
 
             return Ok(new { message = "You have left the channel successfully" });
         }
-    
+
+        // GET: api/channels/{channelId}/messages
+        [HttpGet("{channelId}/messages")]
+        public async Task<IActionResult> GetMessages(int channelId)
+        {
+            var messages = await _context.Messages
+                .Where(m => m.ChannelId == channelId)
+                .OrderBy(m => m.Date)
+                .Join(_context.Users,
+                    message => message.UserId,
+                    user => user.Id,
+                    (message, user) => new MessageResponseDto
+                    {
+                        Id = message.Id,
+                        Content = message.Content,
+                        FilePath = message.FilePath,
+                        FileType = message.FileType,
+                        Date = message.Date ?? DateTime.UtcNow,
+                        UserId = message.UserId,
+                        UserName = !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.UserName,
+                        ChannelId = message.ChannelId
+                    })
+                .ToListAsync();
+
+            return Ok(messages);
+        }
+
+
+        // POST: api/channels/{channelId}/messages
+        [HttpPost("{channelId}/messages")]
+public async Task<IActionResult> PostMessage(int channelId, [FromBody] CreateMessageDto dto)
+{
+    if (string.IsNullOrWhiteSpace(dto.Content) && string.IsNullOrWhiteSpace(dto.FilePath))
+        return BadRequest("Message content or file is required.");
+
+    // Obține utilizatorul autentificat
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null) return Unauthorized();
+
+    var message = new Message
+    {
+        Content = dto.Content,
+        FilePath = dto.FilePath,
+        FileType = dto.FileType,
+        Date = DateTime.UtcNow,
+        UserId = user.Id,
+        ChannelId = channelId
+    };
+
+    _context.Messages.Add(message);
+    await _context.SaveChangesAsync();
+
+    return Ok(new MessageResponseDto
+    {
+        Id = message.Id,
+        Content = message.Content,
+        FilePath = message.FilePath,
+        FileType = message.FileType,
+        Date = message.Date ?? DateTime.UtcNow,
+        UserId = message.UserId,
+        UserName = user.DisplayName ?? user.UserName ?? "Unknown",
+        ChannelId = message.ChannelId
+    });
+}
+
+
+
+
+
+
+
 
         /*// GET api/channels?page=1&pageSize=10&search=chat
         [HttpGet]
@@ -528,12 +598,12 @@ namespace VibeCheck.Server.Controllers
             var query = _context.Channels
                 .Include(c => c.Category)
                 .AsQueryable();
-    
+
             if (!string.IsNullOrWhiteSpace(search))
                 query = query.Where(c => c.Name!.Contains(search));
-    
+
             var total = await query.CountAsync();
-    
+
             var channels = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -545,7 +615,7 @@ namespace VibeCheck.Server.Controllers
                     Category    = new CategoryDTO { Id = c.Category!.Id, Title = c.Category.Title! }
                 })
                 .ToListAsync();
-    
+
             return Ok(new
             {
                 data        = channels,
@@ -553,7 +623,7 @@ namespace VibeCheck.Server.Controllers
                 totalPages  = (int)Math.Ceiling(total / (double)pageSize)
             });
         }
-    
+
         // GET api/channels/5
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetChannel(int id)
@@ -561,9 +631,9 @@ namespace VibeCheck.Server.Controllers
             var c = await _context.Channels
                       .Include(x => x.Category)
                       .FirstOrDefaultAsync(x => x.Id == id);
-    
+
             if (c == null) return NotFound();
-    
+
             var dto = new ChannelDTO
             {
                 Id          = c.Id,
@@ -571,31 +641,31 @@ namespace VibeCheck.Server.Controllers
                 Description = c.Description!,
                 Category    = new CategoryDTO { Id = c.Category!.Id, Title = c.Category.Title! }
             };
-    
+
             return Ok(dto);
         }
-    
+
         // POST api/channels
         [HttpPost]
         public async Task<IActionResult> CreateChannel([FromBody] ChannelCreateDTO dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-    
+
             // verifica dacă există categoria
             var category = await _context.Categories.FindAsync(dto.CategoryId);
             if (category == null)
                 return BadRequest(new { message = "Category not found." });
-    
+
             var channel = new Channel
             {
                 Name        = dto.Name,
                 Description = dto.Description,
                 CategoryId  = dto.CategoryId
             };
-    
+
             _context.Channels.Add(channel);
             await _context.SaveChangesAsync();
-    
+
             // creatorul devine admin local
             var userId = _userManager.GetUserId(User);
             _context.BindChannelUserEntries.Add(new BindChannelUser
@@ -605,32 +675,32 @@ namespace VibeCheck.Server.Controllers
                 Role      = "Admin"
             });
             await _context.SaveChangesAsync();
-    
+
             return CreatedAtAction(nameof(GetChannel), new { id = channel.Id }, new { channel.Id });
         }
-    
+
         // PUT api/channels/5
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateChannel(int id, [FromBody] ChannelCreateDTO dto)
         {
             var ch = await _context.Channels.FindAsync(id);
             if (ch == null) return NotFound();
-    
+
             ch.Name        = dto.Name;
             ch.Description = dto.Description;
             ch.CategoryId  = dto.CategoryId;
-    
+
             await _context.SaveChangesAsync();
             return NoContent();
         }
-    
+
         // DELETE api/channels/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteChannel(int id)
         {
             var ch = await _context.Channels.FindAsync(id);
             if (ch == null) return NotFound();
-    
+
             _context.Channels.Remove(ch);
             await _context.SaveChangesAsync();
             return NoContent();

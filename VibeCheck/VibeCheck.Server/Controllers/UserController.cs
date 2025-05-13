@@ -242,6 +242,24 @@ namespace VibeCheck.Server.Controllers
 
             return Ok(new { message = "Password changed successfully" });
         }
+        // GET: api/user/byId/{id}
+        [HttpGet("byId/{id}")]
+        public async Task<IActionResult> GetUserPublicInfo(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            return Ok(new
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                DisplayName = !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.UserName
+            });
+        }
+
     }
 }
 
