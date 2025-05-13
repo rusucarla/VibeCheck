@@ -693,10 +693,24 @@ namespace VibeCheck.Server.Controllers
         [HttpGet("{channelId}/messages")]
         public async Task<IActionResult> GetMessages(int channelId)
         {
+            //o sa modific aici ca sa se vada poza de orofil
             var messages = await _context.Messages
                 .Where(m => m.ChannelId == channelId)
+                .Include(m => m.User)
                 .OrderBy(m => m.Date)
-                .Join(_context.Users,
+                .Select(m => new MessageResponseDto
+                {
+                    Id = m.Id,
+                    Content = m.Content,
+                    FilePath = m.FilePath,
+                    FileType = m.FileType,
+                    Date = m.Date ?? DateTime.UtcNow,
+                    UserId = m.UserId,
+                    UserName = !string.IsNullOrEmpty(m.User.DisplayName) ? m.User.DisplayName : m.User.UserName,
+                    ChannelId = m.ChannelId,
+                    ProfilePictureUrl = $"/api/user/{m.User.Id}/profile-picture"
+                })
+                /*.Join(_context.Users,
                     message => message.UserId,
                     user => user.Id,
                     (message, user) => new MessageResponseDto
@@ -709,7 +723,7 @@ namespace VibeCheck.Server.Controllers
                         UserId = message.UserId,
                         UserName = !string.IsNullOrEmpty(user.DisplayName) ? user.DisplayName : user.UserName,
                         ChannelId = message.ChannelId
-                    })
+                    })*/
                 .ToListAsync();
 
             return Ok(messages);

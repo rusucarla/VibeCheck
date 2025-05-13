@@ -161,11 +161,25 @@ function ChannelMessagesTab({ channelId, channel }) {
                                     }}
                                 >
                                     {!isCurrentUser && (
-                                        <Avatar
+                                        /*<Avatar
                                             sx={{ mr: 1, width: 32, height: 32, bgcolor: 'primary.main' }}
                                         >
                                             {avatarLetter}
+                                        </Avatar>*/
+                                        /*<Avatar
+                                            src={msg.profilePictureUrl ? `https://localhost:7253${msg.profilePictureUrl}` : undefined}
+                                            sx={{ mr: 1, width: 32, height: 32, bgcolor: 'primary.main' }}
+                                        >
+                                            {!msg.profilePictureUrl && avatarLetter}
                                         </Avatar>
+                                        */
+                                        <Avatar
+                                            sx={{ mr: 1, width: 32, height: 32 }}
+                                            src={`https://localhost:7253/api/user/${msg.userId}/profile-picture`}
+                                        >
+                                            {avatarLetter}
+                                        </Avatar>
+
                                     )}
                                     <Paper
                                         elevation={1}
@@ -190,11 +204,25 @@ function ChannelMessagesTab({ channelId, channel }) {
                                         </Typography>
                                     </Paper>
                                     {isCurrentUser && (
-                                        <Avatar
+                                       /* <Avatar
                                             sx={{ ml: 1, width: 32, height: 32, bgcolor: 'primary.dark' }}
                                         >
                                             {avatarLetter}
+                                        </Avatar>*/
+                                       /* <Avatar
+                                            src={msg.profilePictureUrl ? `https://localhost:7253${msg.profilePictureUrl}` : undefined}
+                                            sx={{ ml: 1, width: 32, height: 32, bgcolor: 'primary.dark' }}
+                                        >
+                                            {!msg.profilePictureUrl && avatarLetter}
+                                        </Avatar>*/
+                                        <Avatar
+                                            sx={{ ml: 1, width: 32, height: 32 }}
+                                            src={`https://localhost:7253/api/user/${msg.userId}/profile-picture`}
+                                        >
+                                            {avatarLetter}
                                         </Avatar>
+
+
                                     )}
                                 </Box>
                             );

@@ -19,5 +19,8 @@ namespace VibeCheck.Server.DTO
         public string UserId { get; set; }
         public string UserName { get; set; } // Numele de utilizator
         public int ChannelId { get; set; }
+
+        //incerc sa fac poza de profil
+        public string? ProfilePictureUrl { get; set; }
     }
 }

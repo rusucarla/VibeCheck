@@ -213,16 +213,29 @@ namespace VibeCheck.Server.Controllers
         }
 
         // GET: api/user/profile-picture
-        [Authorize]
-        [HttpGet("profile-picture")]
-        public async Task<IActionResult> GetProfilePicture()
+        /* [Authorize]
+         [HttpGet("profile-picture")]
+         public async Task<IActionResult> GetProfilePicture()
+         {
+             var user = await _userManager.GetUserAsync(User);
+             if (user?.ProfilePicture == null)
+                 return NotFound();
+
+             return File(user.ProfilePicture, user.ProfilePictureContentType ?? "image/jpeg");
+         }
+        */
+        // GET: api/user/{userId}/profile-picture
+        [Authorize(Roles = "User, Admin")]
+        [HttpGet("{userId}/profile-picture")]
+        public async Task<IActionResult> GetProfilePictureById(string userId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user?.ProfilePicture == null)
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null || user.ProfilePicture == null)
                 return NotFound();
 
             return File(user.ProfilePicture, user.ProfilePictureContentType ?? "image/jpeg");
         }
+
         // POST: api/user/change-password
         [Authorize]
         [HttpPost("change-password")]
