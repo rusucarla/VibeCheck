@@ -10,17 +10,17 @@ function ChannelMessagesTab({ channelId, channel }) {
     const [message, setMessage] = useState('');
     const [userId, setUserId] = useState('');
     const [loading, setLoading] = useState(true);
-    const [userCache, setUserCache] = useState({}); // Cache pentru informațiile utilizatorilor
+    const [userCache, setUserCache] = useState({}); // Cache pentru info utilizatorilor
     const messagesEndRef = useRef(null);
 
-    // Funcție pentru a face scroll în jos când apar mesaje noi
+    // Functie pentru a face scroll în jos cand apar mesaje noi
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     // Obține informațiile despre un utilizator
     const fetchUserInfo = async (userId) => {
-        // Verifică dacă informațiile sunt deja în cache
+        // Verifica daca info sunt deja în cache
         if (userCache[userId]) {
             return userCache[userId];
         }
@@ -28,10 +28,13 @@ function ChannelMessagesTab({ channelId, channel }) {
         try {
             const userInfo = await getUserById(userId);
             if (userInfo) {
-                // Actualizează cache-ul
+                // update cache-ul
                 setUserCache(prev => ({
                     ...prev,
-                    [userId]: userInfo
+                    [userId]: {
+                        ...userInfo,
+                        avatarUpdatedAt: Date.now()  // <<< AICI ADAUG
+                    }
                 }));
                 return userInfo;
             }
@@ -42,13 +45,13 @@ function ChannelMessagesTab({ channelId, channel }) {
     };
 
     useEffect(() => {
-        // Obține informații despre utilizatorul curent
+        // Obtin info despre utilizatorul curent
         const getUserInfo = async () => {
             try {
                 const userInfo = await getCurrentUserInfo();
                 if (userInfo) {
                     setUserId(userInfo.id);
-                    // Adaugă utilizatorul curent în cache
+                    // Ad utilizatorul curent in cache
                     setUserCache(prev => ({
                         ...prev,
                         [userInfo.id]: userInfo
@@ -67,7 +70,7 @@ function ChannelMessagesTab({ channelId, channel }) {
                 console.log("Date primite de la server:", data);
                 setMessages(data);
 
-                // Preîncarcă informațiile despre utilizatori
+                // Preload info despre utilizatori
                 const uniqueUserIds = [...new Set(data.map(msg => msg.userId))];
                 for (const uid of uniqueUserIds) {
                     if (!userCache[uid]) {
@@ -106,7 +109,7 @@ function ChannelMessagesTab({ channelId, channel }) {
         }
     };
 
-    // Obține numele de afișare pentru un utilizator
+    // get display name pentru un utilizator
     const getDisplayName = (userId, isCurrentUser) => {
         if (isCurrentUser) return "Tu";
 
@@ -115,7 +118,7 @@ function ChannelMessagesTab({ channelId, channel }) {
             return userInfo.displayName || userInfo.userName || `Utilizator ${userId.substring(0, 5)}`;
         }
 
-        // Dacă nu avem informații în cache, începe să le obțină
+        // get info din cache daca nu le am deja
         fetchUserInfo(userId);
         return `Utilizator ${userId.substring(0, 5)}`;
     };
@@ -141,13 +144,13 @@ function ChannelMessagesTab({ channelId, channel }) {
                 ) : (
                     <Stack spacing={2}>
                         {messages.map(msg => {
-                            // Verifică dacă mesajul e de la utilizatorul curent
+                            // check daca mesajul e de la current user
                             const isCurrentUser = msg.userId === userId;
 
-                            // Obține numele de afișat din cache sau din răspunsul API-ului
+                            // afisez numele
                             const displayName = getDisplayName(msg.userId, isCurrentUser);
 
-                            // Obține prima literă pentru avatar
+                            // litera pt avatar
                             const avatarLetter = isCurrentUser ? "T" :
                                 (displayName?.charAt(0)?.toUpperCase() || "?");
 
@@ -175,7 +178,8 @@ function ChannelMessagesTab({ channelId, channel }) {
                                         */
                                         <Avatar
                                             sx={{ mr: 1, width: 32, height: 32 }}
-                                            src={`https://localhost:7253/api/user/${msg.userId}/profile-picture`}
+                                            //src={`https://localhost:7253/api/user/${msg.userId}/profile-picture`}
+                                            src={`https://localhost:7253/api/user/${msg.userId}/profile-picture?ts=${userCache[msg.userId]?.avatarUpdatedAt || 0}`}
                                         >
                                             {avatarLetter}
                                         </Avatar>
@@ -217,7 +221,8 @@ function ChannelMessagesTab({ channelId, channel }) {
                                         </Avatar>*/
                                         <Avatar
                                             sx={{ ml: 1, width: 32, height: 32 }}
-                                            src={`https://localhost:7253/api/user/${msg.userId}/profile-picture`}
+                                            // src={`https://localhost:7253/api/user/${userId}/profile-picture?ts=${Date.now()}`}
+                                            src={`https://localhost:7253/api/user/${userId}/profile-picture?ts=${userCache[userId]?.avatarUpdatedAt || 0}`}
                                         >
                                             {avatarLetter}
                                         </Avatar>
