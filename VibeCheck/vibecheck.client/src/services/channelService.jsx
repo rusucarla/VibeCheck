@@ -216,17 +216,12 @@ export async function checkChannelAdminAccess(channelId) {
         // Get subscribed channels
         const userChannels = await getUserChannels();
         const isChannelAdmin = userChannels?.data?.some(
-            channel => channel.id === channelId && channel.userRole === "Admin"
+            channel => channel.id === parseInt(channelId) && channel.userRole === "Admin"
         );
-
-        // Get global role
-        const userRoles = await getUserRole();
-        const isGlobalAdmin = userRoles?.roles?.includes("Admin");
-
-        return isChannelAdmin || isGlobalAdmin;
+        return { isAdmin: isChannelAdmin};
     } catch (error) {
         console.error("Error checking admin access:", error);
-        return false;
+        return { isAdmin: false };
     }
 }
 
@@ -303,5 +298,84 @@ export async function getCurrentUserInfo() {
     } catch (error) {
         console.error("Error fetching user info:", error);
         return null;
+    }
+}
+
+// Get all users in a channel
+export async function getChannelUsers(channelId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/users`, {
+            method: "GET",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch channel users");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching channel users:", error);
+        throw error;
+    }
+}
+
+// Promote a user to admin in a channel
+export async function promoteChannelUser(channelId, userId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/users/${userId}/promote`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to promote user");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error promoting channel user:", error);
+        throw error;
+    }
+}
+
+// Demote a user to member in a channel
+export async function demoteChannelUser(channelId, userId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/users/${userId}/demote`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to demote user");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error demoting channel user:", error);
+        throw error;
+    }
+}
+
+// Remove a user from a channel
+export async function removeChannelUser(channelId, userId) {
+    try {
+        const response = await fetch(`${API_URL}/${channelId}/users/${userId}/remove`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to remove user");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error removing channel user:", error);
+        throw error;
     }
 }

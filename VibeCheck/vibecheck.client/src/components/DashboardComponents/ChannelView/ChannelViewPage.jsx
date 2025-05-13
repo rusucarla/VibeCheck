@@ -1,37 +1,43 @@
 ﻿// src/components/DashboardComponents/ChannelView/ChannelViewPage.jsx
 import { useState, useEffect } from 'react';
-import { Box, Typography, Tabs, Tab, Paper, CircularProgress, Container, Divider } from '@mui/material';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { getChannelById } from '../../../services/channelService';
-import { getChannelRecommendations } from '../../../services/recommendationService';
+import { Box, Typography, Tabs, Tab, Paper, CircularProgress, Container, Divider, Button } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getChannelById, checkChannelAdminAccess } from '@/services/channelService.jsx';
+import { getChannelRecommendations } from '@/services/recommendationService.jsx';
 import ChannelMessagesTab from './ChannelMessagesTab';
 import ChannelRecommendationsTab from './ChannelRecommendationsTab';
+import ChannelUsersTab from './ChannelUsersTab';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 function ChannelViewPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const location = useLocation();
     const [channel, setChannel] = useState(null);
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentTab, setCurrentTab] = useState(0);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         const loadChannel = async () => {
             try {
                 setLoading(true);
+                // Force fresh data by clearing any cache
                 const channelData = await getChannelById(id);
                 setChannel(channelData);
 
-                // Also load recommendations
-                const recData = await getChannelRecommendations(id);
-                setRecommendations(recData || []);
+                // Check if current user is an admin of this channel
+                const adminStatus = await checkChannelAdminAccess(id);
+                setIsAdmin(adminStatus.isAdmin);
+                console.log("Admin status check:", adminStatus);
+
+                const recommendationsData = await getChannelRecommendations(id);
+                setRecommendations(recommendationsData);
                 setLoading(false);
             } catch (err) {
-                console.error("Error loading channel data:", err);
-                setError("Failed to load channel data.");
+                console.error("Error loading channel:", err);
+                setError(err.message || "Failed to load channel");
                 setLoading(false);
             }
         };
@@ -110,12 +116,14 @@ function ChannelViewPage() {
                 <Tabs value={currentTab} onChange={handleTabChange}>
                     <Tab label="Messages" id="channel-tab-0" />
                     <Tab label="Recommendations" id="channel-tab-1" />
+                    {isAdmin && <Tab label="Users" id="channel-tab-2" />}
                 </Tabs>
             </Box>
 
             <Box sx={{ mt: 2 }}>
                 {currentTab === 0 && <ChannelMessagesTab channelId={id} channel={channel} />}
                 {currentTab === 1 && <ChannelRecommendationsTab channelId={id} recommendations={recommendations} />}
+                {currentTab === 2 && isAdmin && <ChannelUsersTab channelId={id} />}
             </Box>
         </Container>
     );

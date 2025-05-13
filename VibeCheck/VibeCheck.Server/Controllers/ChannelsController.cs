@@ -339,6 +339,177 @@ namespace VibeCheck.Server.Controllers
             return Ok(new { message = "Join request rejected" });
         }
         
+        // GET: api/channels/{channelId}/users
+        [HttpGet("{channelId}/users")]
+        public async Task<IActionResult> GetChannelUsers(int channelId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Check if channel exists
+            var channel = await _context.Channels.FindAsync(channelId);
+            if (channel == null)
+                return NotFound(new { message = "Channel not found" });
+
+            // Check if the current user is an admin of the channel
+            var isAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == channelId && b.UserId == user.Id && b.Role == "Admin");
+
+            var isGlobalAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+            if (!isAdmin && !isGlobalAdmin)
+                return Forbid();
+
+            // Get all users in the channel with their roles
+            var channelUsers = await _context.BindChannelUserEntries
+                .Where(b => b.ChannelId == channelId)
+                .Join(_context.Users,
+                    binding => binding.UserId,
+                    appUser => appUser.Id,
+                    (binding, appUser) => new
+                    {
+                        Id = appUser.Id,
+                        UserName = appUser.UserName,
+                        DisplayName = appUser.DisplayName,
+                        Role = binding.Role
+                    })
+                .ToListAsync();
+
+            return Ok(channelUsers);
+        }
+
+        // POST: api/channels/{channelId}/users/{userId}/promote
+        [HttpPost("{channelId}/users/{userId}/promote")]
+        public async Task<IActionResult> PromoteChannelUser(int channelId, string userId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            // Check if channel exists
+            var channel = await _context.Channels.FindAsync(channelId);
+            if (channel == null)
+                return NotFound(new { message = "Channel not found" });
+
+            // Check if the current user is an admin of the channel
+            var isAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == channelId && b.UserId == currentUser.Id && b.Role == "Admin");
+
+            var isGlobalAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+
+            if (!isAdmin && !isGlobalAdmin)
+                return Forbid();
+
+            // Check if the target user exists and is a member of the channel
+            var userToPromote = await _context.BindChannelUserEntries
+                .FirstOrDefaultAsync(b => b.ChannelId == channelId && b.UserId == userId);
+
+            if (userToPromote == null)
+                return NotFound(new { message = "User not found in this channel" });
+
+            if (userToPromote.Role == "Admin")
+                return BadRequest(new { message = "User is already an admin" });
+
+            // Promote user to Admin
+            userToPromote.Role = "Admin";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User promoted to Admin successfully" });
+        }
+
+        // POST: api/channels/{channelId}/users/{userId}/demote
+        [HttpPost("{channelId}/users/{userId}/demote")]
+        public async Task<IActionResult> DemoteChannelUser(int channelId, string userId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            // Check if channel exists
+            var channel = await _context.Channels.FindAsync(channelId);
+            if (channel == null)
+                return NotFound(new { message = "Channel not found" });
+
+            // Check if the current user is an admin of the channel
+            var isAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == channelId && b.UserId == currentUser.Id && b.Role == "Admin");
+
+            var isGlobalAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+
+            if (!isAdmin && !isGlobalAdmin)
+                return Forbid();
+
+            // Prevent self-demotion to ensure there's always at least one admin
+            if (userId == currentUser.Id)
+                return BadRequest(new { message = "You cannot demote yourself" });
+
+            // Check if the target user exists and is a member of the channel
+            var userToDemote = await _context.BindChannelUserEntries
+                .FirstOrDefaultAsync(b => b.ChannelId == channelId && b.UserId == userId);
+
+            if (userToDemote == null)
+                return NotFound(new { message = "User not found in this channel" });
+
+            if (userToDemote.Role == "Member")
+                return BadRequest(new { message = "User is already a member" });
+
+            // Check if this is the last admin
+            var adminCount = await _context.BindChannelUserEntries
+                .CountAsync(b => b.ChannelId == channelId && b.Role == "Admin");
+
+            if (adminCount <= 1)
+                return BadRequest(new { message = "Cannot demote the last admin of the channel" });
+
+            // Demote user to Member
+            userToDemote.Role = "Member";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User demoted to Member successfully" });
+        }
+
+        // POST: api/channels/{channelId}/users/{userId}/remove
+        [HttpPost("{channelId}/users/{userId}/remove")]
+        public async Task<IActionResult> RemoveChannelUser(int channelId, string userId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            // Check if channel exists
+            var channel = await _context.Channels.FindAsync(channelId);
+            if (channel == null)
+                return NotFound(new { message = "Channel not found" });
+
+            // Check if the current user is an admin of the channel
+            var isAdmin = await _context.BindChannelUserEntries
+                .AnyAsync(b => b.ChannelId == channelId && b.UserId == currentUser.Id && b.Role == "Admin");
+
+            var isGlobalAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+
+            if (!isAdmin && !isGlobalAdmin)
+                return Forbid();
+
+            // Prevent self-removal if the user is the last admin
+            if (userId == currentUser.Id)
+            {
+                var adminCount = await _context.BindChannelUserEntries
+                    .CountAsync(b => b.ChannelId == channelId && b.Role == "Admin");
+
+                if (adminCount <= 1)
+                    return BadRequest(new { message = "You cannot remove yourself as you are the last admin" });
+            }
+
+            // Check if the target user exists and is a member of the channel
+            var userToRemove = await _context.BindChannelUserEntries
+                .FirstOrDefaultAsync(b => b.ChannelId == channelId && b.UserId == userId);
+
+            if (userToRemove == null)
+                return NotFound(new { message = "User not found in this channel" });
+
+            // Remove the user from the channel
+            _context.BindChannelUserEntries.Remove(userToRemove);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User removed from the channel successfully" });
+        }
+        
         // [HttpPut("{id:int}")]
         // public async Task<IActionResult> UpdateChannel(int id, [FromBody] ChannelCreateDTO dto)
         // {
@@ -547,40 +718,40 @@ namespace VibeCheck.Server.Controllers
 
         // POST: api/channels/{channelId}/messages
         [HttpPost("{channelId}/messages")]
-public async Task<IActionResult> PostMessage(int channelId, [FromBody] CreateMessageDto dto)
-{
-    if (string.IsNullOrWhiteSpace(dto.Content) && string.IsNullOrWhiteSpace(dto.FilePath))
-        return BadRequest("Message content or file is required.");
+        public async Task<IActionResult> PostMessage(int channelId, [FromBody] CreateMessageDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Content) && string.IsNullOrWhiteSpace(dto.FilePath))
+                return BadRequest("Message content or file is required.");
 
-    // Obține utilizatorul autentificat
-    var user = await _userManager.GetUserAsync(User);
-    if (user == null) return Unauthorized();
+            // Obține utilizatorul autentificat
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-    var message = new Message
-    {
-        Content = dto.Content,
-        FilePath = dto.FilePath,
-        FileType = dto.FileType,
-        Date = DateTime.UtcNow,
-        UserId = user.Id,
-        ChannelId = channelId
-    };
+            var message = new Message
+            {
+                Content = dto.Content,
+                FilePath = dto.FilePath,
+                FileType = dto.FileType,
+                Date = DateTime.UtcNow,
+                UserId = user.Id,
+                ChannelId = channelId
+            };
 
-    _context.Messages.Add(message);
-    await _context.SaveChangesAsync();
+            _context.Messages.Add(message);
+            await _context.SaveChangesAsync();
 
-    return Ok(new MessageResponseDto
-    {
-        Id = message.Id,
-        Content = message.Content,
-        FilePath = message.FilePath,
-        FileType = message.FileType,
-        Date = message.Date ?? DateTime.UtcNow,
-        UserId = message.UserId,
-        UserName = user.DisplayName ?? user.UserName ?? "Unknown",
-        ChannelId = message.ChannelId
-    });
-}
+            return Ok(new MessageResponseDto
+            {
+                Id = message.Id,
+                Content = message.Content,
+                FilePath = message.FilePath,
+                FileType = message.FileType,
+                Date = message.Date ?? DateTime.UtcNow,
+                UserId = message.UserId,
+                UserName = user.DisplayName ?? user.UserName ?? "Unknown",
+                ChannelId = message.ChannelId
+            });
+        }
 
 
 
