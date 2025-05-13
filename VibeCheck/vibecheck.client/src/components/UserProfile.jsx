@@ -310,13 +310,25 @@ const UserProfile = () => {
                         <CardContent>
                             <Stack direction="column" spacing={3} alignItems="center">
                                 <Avatar
-                                    src={`https://localhost:7253/api/user/profile-picture?${avatarTimestamp}`}
+                                   /* src={`https://localhost:7253/api/user/profile-picture?${avatarTimestamp}`}
+                                    sx={{
+                                        width: 120,
+                                        height: 120,
+                                        fontSize: 48
+                                    }}*/
+                                    src={`https://localhost:7253/api/user/${user.id}/profile-picture?${avatarTimestamp}`}
                                     sx={{
                                         width: 120,
                                         height: 120,
                                         fontSize: 48
                                     }}
-                                />
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = ""; // sterg ca sa pot folosi fallbackul
+                                    }}
+                                >
+                                    {user.userName?.charAt(0).toUpperCase()}
+                                </Avatar>
                                 <label htmlFor="upload-avatar">
                                     <input
                                         accept="image/*"
