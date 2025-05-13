@@ -18,6 +18,7 @@ function AppRoutes() {
                 <Route path="/dashboard" element={<DashboardLayout />}>
                     <Route index element={<Placeholder />} />
                     <Route path="profile" element={<UserProfile />} />
+                    <Route path="admin" element={<AdminPanel />} />
                 </Route>
                 <Route path="/confirm-email" element={<ConfirmEmail />} />
                 <Route path="*" element={<h1> 404 - Page does not exist</h1>} />
