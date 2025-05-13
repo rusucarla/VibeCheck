@@ -11,10 +11,12 @@ import {
     Chip,
     Tooltip,
     Snackbar,
-    Alert
+    Alert,
+    useTheme
 } from "@mui/material";
 import { Add, Delete, Edit, PersonAdd, ExitToApp } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import Card from "../ui/Card";
 import {
     getAllChannels,
     deleteChannel,
@@ -41,6 +43,7 @@ function ChannelsPage() {
     });
     const pageSize = 9;
     const navigate = useNavigate();
+    const theme = useTheme();
 
     const loadChannels = async (currentPage, searchTerm = "") => {
         const result = await getAllChannels(currentPage, pageSize, searchTerm);
@@ -57,7 +60,6 @@ function ChannelsPage() {
 
         // Check if user is global admin
         const userRoleResult = await getUserRole();
-        console.log("User roles:", userRoleResult);
         setIsGlobalAdmin(userRoleResult?.roles?.includes("Admin"));
     };
 
@@ -75,7 +77,6 @@ function ChannelsPage() {
                     const hasAccess = await checkChannelAdminAccess(channel.id);
                     accessMap[channel.id] = hasAccess;
                 } catch (error) {
-                    console.error(`Error checking admin access for channel ${channel.id}:`, error);
                     accessMap[channel.id] = false;
                 }
             }
@@ -93,7 +94,6 @@ function ChannelsPage() {
         const isChannelAdmin = userChannels.some(
             channel => channel.id === channelId && channel.userRole === "Admin"
         );
-        console.log("User channels:", userChannels);
         // Or if they're a global admin
         return isChannelAdmin;
     };
@@ -103,7 +103,12 @@ function ChannelsPage() {
         return channel ? channel.userRole : null;
     };
 
-    const handleLeaveChannel = async (channelId) => {
+    const handleLeaveChannel = async (channelId, event) => {
+        // Prevent card click propagation
+        if (event) {
+            event.stopPropagation();
+        }
+        
         try {
             // Call the leave channel API
             await leaveChannel(channelId);
@@ -133,7 +138,13 @@ function ChannelsPage() {
             });
         }
     };
-    const handleDelete = async (id) => {
+    
+    const handleDelete = async (id, event) => {
+        // Prevent card click propagation
+        if (event) {
+            event.stopPropagation();
+        }
+        
         if (window.confirm("Are you sure you want to delete this channel?")) {
             try {
                 await deleteChannel(id);
@@ -154,7 +165,12 @@ function ChannelsPage() {
         }
     };
 
-    const handleJoinRequest = async (channelId) => {
+    const handleJoinRequest = async (channelId, event) => {
+        // Prevent card click propagation
+        if (event) {
+            event.stopPropagation();
+        }
+        
         try {
             await requestToJoinChannel(channelId);
             setSnackbar({
@@ -193,54 +209,58 @@ function ChannelsPage() {
             </Typography>
 
             <Stack direction="row" spacing={2} mb={3} alignItems="center">
-                <Button
-                    variant="contained"
-                    startIcon={<Add />}
+                <Button 
+                    variant="contained" 
+                    startIcon={<Add />} 
                     onClick={() => navigate("/dashboard/channels/new")}
+                    sx={{
+                        backgroundColor: theme.palette.primary.main,
+                        '&:hover': {
+                            backgroundColor: theme.palette.primary.dark,
+                        }
+                    }}
                 >
-                    Add canal
+                    Adaugă canal
                 </Button>
-                <form onSubmit={handleSearchSubmit}>
+                <form onSubmit={handleSearchSubmit} style={{ width: '100%', maxWidth: '400px' }}>
                     <TextField
-                        label="Cauta canale"
+                        label="Caută canale"
                         variant="outlined"
                         size="small"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                        fullWidth
+                        InputProps={{
+                            sx: { borderRadius: '8px' }
+                        }}
                     />
                 </form>
             </Stack>
 
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
                 {channels.map((channel) => (
                     <Grid item xs={12} sm={6} md={4} key={channel.id}>
-                        <Box
+                        <Card
+                            title={channel.name}
                             sx={{
-                                p: 2,
-                                border: "1px solid",
-                                borderRadius: "8px",
-                                textAlign: "center",
-                                backgroundColor: "background.paper",
-                                position: "relative",
-                                display: "flex",
-                                flexDirection: "column",
-                                height: "100%",
-                                // Only show pointer cursor if user is a member
+                                height: '100%',
+                                margin: 0,
+                                position: 'relative',
+                                backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#ffffff',
+                                color: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
                                 cursor: isUserMember(channel.id) ? "pointer" : "default",
-                                // Dim appearance for non-members
-                                opacity: isUserMember(channel.id) ? 1 : 0.7,
-                            }}
-                            onClick={(e) => {
-                                // Prevent navigation if user clicks on the admin buttons area
-                                if (e.target.closest('.admin-actions')) {
-                                    e.stopPropagation();
-                                    return;
+                                opacity: isUserMember(channel.id) ? 1 : 0.8,
+                                filter: isUserMember(channel.id) ? "none" : "grayscale(20%)",
+                                transition: "all 0.3s ease-in-out",
+                                '&:hover': {
+                                    filter: "none",
+                                    opacity: 1,
                                 }
-                                // Only navigate if user is a member
+                            }}
+                            onClick={() => {
                                 if (isUserMember(channel.id)) {
                                     navigate(`/dashboard/channel/${channel.id}`);
                                 } else {
-                                    // Show a message that they need to join first
                                     setSnackbar({
                                         open: true,
                                         message: "Trebuie să fii membru al acestui canal pentru a-l accesa.",
@@ -249,103 +269,163 @@ function ChannelsPage() {
                                 }
                             }}
                         >
-                            <Typography variant="h6">{channel.name}</Typography>
-                            <Typography variant="body2" gutterBottom>
+                            <Typography variant="body2" sx={{ mb: 1 }}>
                                 {channel.description}
                             </Typography>
 
-                            <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" mt={1}>
+                            <Stack direction="row" spacing={0.5} justifyContent="center" flexWrap="wrap" mb={1}>
                                 {channel.categories?.map((cat) => (
-                                    <Chip key={cat.id} label={cat.title} size="small" />
+                                    <Chip
+                                        key={cat.id}
+                                        label={cat.title}
+                                        size="small"
+                                        sx={{
+                                            borderRadius: '12px',
+                                            backgroundColor: theme.palette.mode === 'dark' ?
+                                                'rgba(156, 39, 176, 0.15)' : 'rgba(156, 39, 176, 0.1)',
+                                            color: theme.palette.primary.main,
+                                            border: `1px solid ${theme.palette.primary.main}`,
+                                            fontWeight: 500,
+                                            fontSize: '0.7rem',
+                                            height: '20px',
+                                            margin: '2px'
+                                        }}
+                                    />
                                 ))}
                             </Stack>
 
                             {/* Admin actions */}
                             {(hasAdminAccess(channel.id) || isGlobalAdmin) && (
-                                <Box
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
                                     sx={{
                                         position: "absolute",
-                                        top: 5,
-                                        right: 5,
-                                        display: "flex",
-                                        gap: 1,
+                                        top: 8,
+                                        right: 8,
                                     }}
                                 >
                                     <IconButton
-                                        onClick={() => navigate(`/dashboard/channels/edit/${channel.id}`)}
+                                        onClick={(e) => navigate(`/dashboard/channels/edit/${channel.id}`)}
                                         size="small"
+                                        sx={{
+                                            color: theme.palette.warning.main,
+                                            '&:hover': { color: theme.palette.warning.dark },
+                                            padding: '4px'
+                                        }}
                                     >
                                         <Edit fontSize="small" />
                                     </IconButton>
                                     <IconButton
-                                        onClick={() => handleDelete(channel.id)}
+                                        onClick={(e) => handleDelete(channel.id, e)}
                                         size="small"
+                                        sx={{
+                                            color: theme.palette.error.main,
+                                            '&:hover': { color: theme.palette.error.dark },
+                                            padding: '4px'
+                                        }}
                                     >
                                         <Delete fontSize="small" />
                                     </IconButton>
-                                </Box>
+                                </Stack>
                             )}
 
-                            {/* Join button for non-members */}
-                            <Box sx={{ mt: "auto", pt: 2 }}>
-                                {!isUserMember(channel.id) && (
+                            {/* Join/Leave actions - spațiere redusă */}
+                            <Box sx={{ mt: "auto", pt: 1 }}>
+                                {!isUserMember(channel.id) ? (
                                     <Button
                                         variant="outlined"
                                         startIcon={<PersonAdd />}
                                         size="small"
-                                        onClick={() => handleJoinRequest(channel.id)}
-                                        sx={{ textTransform: 'none' }}
+                                        onClick={(e) => handleJoinRequest(channel.id, e)}
+                                        sx={{
+                                            borderRadius: '12px',
+                                            borderColor: theme.palette.primary.main,
+                                            color: theme.palette.primary.main,
+                                            '&:hover': {
+                                                borderColor: theme.palette.primary.dark,
+                                                backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                                            },
+                                            padding: '2px 10px',
+                                            fontSize: '0.75rem'
+                                        }}
                                     >
-                                        Request to Join
+                                        Solicită participare
                                     </Button>
-                                )}
-                                {isUserMember(channel.id) && (
-                                    <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                                        {hasAdminAccess(channel.id) && (
-                                            <Chip
-                                                label="Channel Admin"
-                                                color="secondary"
-                                                size="small"
-                                                variant="outlined"
-                                            />
-                                        )}
-                                        {isGlobalAdmin && (
-                                            <Chip
-                                                label="Global Admin"
-                                                color="error"
-                                                size="small"
-                                                variant="outlined"
-                                            />
-                                        )}
-                                        {!hasAdminAccess(channel.id) && (
-                                            <Chip
-                                                label="Member"
-                                                color="primary"
-                                                size="small"
-                                                variant="outlined"
-                                            />
-                                        )}
-                                    </Box>
-                                )}
-                                {isUserMember(channel.id) && (
-                                    <Tooltip title="Leave Channel">
-                                        <IconButton
+                                ) : (
+                                    <Stack spacing={1} alignItems="center">
+                                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
+                                            {hasAdminAccess(channel.id) ? (
+                                                <Chip
+                                                    label="Admin"
+                                                    color="secondary"
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{
+                                                        borderRadius: '12px',
+                                                        height: '22px',
+                                                        fontSize: '0.7rem'
+                                                    }}
+                                                />
+                                            ) : (
+                                                <Chip
+                                                    label="Membru"
+                                                    color="primary"
+                                                    size="small"
+                                                    variant="outlined"
+                                                    sx={{
+                                                        borderRadius: '12px',
+                                                        height: '22px',
+                                                        fontSize: '0.7rem'
+                                                    }}
+                                                />
+                                            )}
+
+                                            <Tooltip title="Părăsire canal">
+                                                <IconButton
+                                                    size="small"
+                                                    sx={{
+                                                        color: theme.palette.warning.main,
+                                                        '&:hover': {
+                                                            color: theme.palette.warning.dark,
+                                                            backgroundColor: 'rgba(255, 152, 0, 0.1)'
+                                                        },
+                                                        padding: '2px'
+                                                    }}
+                                                    onClick={(e) => handleLeaveChannel(channel.id, e)}
+                                                >
+                                                    <ExitToApp fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+
+                                        <Button
+                                            variant="outlined"
                                             size="small"
-                                            color="warning"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleLeaveChannel(channel.id);
+                                            sx={{
+                                                borderRadius: '12px',
+                                                borderColor: theme.palette.primary.main,
+                                                color: theme.palette.primary.main,
+                                                '&:hover': {
+                                                    borderColor: theme.palette.primary.dark,
+                                                    backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                                                },
+                                                padding: '2px 10px',
+                                                fontSize: '0.75rem',
+                                                marginTop: '4px'
                                             }}
+                                            onClick={() => navigate(`/dashboard/channel/${channel.id}`)}
                                         >
-                                            <ExitToApp />
-                                        </IconButton>
-                                    </Tooltip>
+                                            Accesează canalul
+                                        </Button>
+                                    </Stack>
                                 )}
                             </Box>
-                        </Box>
+                        </Card>
                     </Grid>
                 ))}
             </Grid>
+
 
             <Stack spacing={2} alignItems="center" mt={4}>
                 <Pagination
@@ -355,6 +435,11 @@ function ChannelsPage() {
                     color="primary"
                     variant="outlined"
                     shape="rounded"
+                    sx={{
+                        '& .MuiPaginationItem-root': {
+                            borderRadius: '8px',
+                        }
+                    }}
                 />
             </Stack>
 
@@ -377,6 +462,7 @@ function ChannelsPage() {
 }
 
 export default ChannelsPage;
+
 
 // import { useEffect, useState } from "react";
 // import {

@@ -24,7 +24,7 @@ function ChannelMessagesTab({ channelId, channel }) {
         if (userCache[userId]) {
             return userCache[userId];
         }
-
+        
         try {
             const userInfo = await getUserById(userId);
             if (userInfo) {
