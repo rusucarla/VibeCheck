@@ -47,18 +47,33 @@ namespace VibeCheck.Server.Controllers
             return Ok(user);
         }
 
+        
         // GET: api/user
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
-        {
-            var users = await _context.Users
-                .Include(u => u.TopTmdbItems)
-                .Include(u => u.TopSongs)
-                .ToListAsync();
+        
+[HttpGet]
+public async Task<IActionResult> GetUsers()
+{
+    var users = await _context.Users.ToListAsync();
+    var usersWithRoles = new List<object>();
 
-            return Ok(users);
-        }
+    foreach (var user in users)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        var currentRole = roles.FirstOrDefault() ?? "User"; // Ia primul rol sau "User" dacă nu există
+        
+        usersWithRoles.Add(new
+        {
+            id = user.Id,
+            userName = user.UserName,
+            email = user.Email,
+            role = currentRole // Acum returnăm un singur string, nu un array
+        });
+    }
+
+    return Ok(usersWithRoles);
+}
 
         // DELETE: api/users/{id}
         [Authorize(Roles = "Admin")]
@@ -94,6 +109,12 @@ namespace VibeCheck.Server.Controllers
         [HttpPost("promote/{id}")]
         public async Task<IActionResult> PromoteUser(string id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser.Id == id)
+            {
+                return BadRequest(new { message = "Nu îți poți modifica propriul rol de administrator" });
+            }
+
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound(new { message = "User not found" });
 
@@ -111,6 +132,12 @@ namespace VibeCheck.Server.Controllers
         [HttpPost("demote/{id}")]
         public async Task<IActionResult> DemoteUser(string id)
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser.Id == id)
+            {
+                return BadRequest(new { message = "Nu îți poți modifica propriul rol de administrator" });
+            }
+
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound(new { message = "User not found" });
 

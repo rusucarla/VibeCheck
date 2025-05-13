@@ -209,3 +209,65 @@ export const changePassword = async (currentPassword, newPassword) => {
         throw error;
     }
 };
+export async function getAllUsers() {
+    try {
+        const response = await fetch(`${API_URL_GENERAL}/User`, {
+            method: "GET",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch users");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        throw error;
+    }
+}
+
+export async function promoteUser(userId) {
+    try {
+        const response = await fetch(`${API_URL_GENERAL}/User/promote/${userId}`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to promote user");
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function demoteUser(userId) {
+    try {
+        const response = await fetch(`${API_URL_GENERAL}/User/demote/${userId}`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to demote user");
+        }
+
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
