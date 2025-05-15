@@ -181,7 +181,12 @@ import {
     ChevronLeft,
     ChevronRight,
     MusicNote,
-    Movie as MovieIcon, Inbox
+    Movie as MovieIcon,
+    Brightness4,
+    Brightness7,
+    Palette,
+    ColorLens,
+    Inbox
 } from "@mui/icons-material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getUserRole, logout } from "../services/authServices";
@@ -195,8 +200,18 @@ function DashboardLayout() {
     const [open, setOpen] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
-    const { darkMode, toggleTheme } = useThemeContext();
     const theme = useTheme();
+    const { darkMode, currentTheme, cycleTheme } = useThemeContext();
+    const getThemeIcon = (theme) => {
+        switch(theme) {
+            case 'light': return <Brightness7 />;
+            case 'dark': return <Brightness4 />;
+            case 'purple': return <Palette sx={{ color: '#9c27b0' }} />;
+            case 'pink': return <Palette sx={{ color: '#e91e63' }} />;
+            case 'green': return <Palette sx={{ color: '#4caf50' }} />;
+            default: return <ColorLens />;
+        }
+    };
 
     useEffect(() => {
         const checkRole = async () => {
@@ -265,8 +280,27 @@ function DashboardLayout() {
                     VibeCheck Dashboard
                 </Typography>
 
+                {/*<Box*/}
+                {/*    onClick={toggleTheme}*/}
+                {/*    sx={{*/}
+                {/*        display: "flex",*/}
+                {/*        alignItems: "center",*/}
+                {/*        justifyContent: "center",*/}
+                {/*        width: 40,*/}
+                {/*        height: 40,*/}
+                {/*        borderRadius: "50%",*/}
+                {/*        cursor: "pointer",*/}
+                {/*        bgcolor: theme.palette.primary.main,*/}
+                {/*        color: theme.palette.primary.contrastText,*/}
+                {/*        "&:hover": {*/}
+                {/*            opacity: 0.9*/}
+                {/*        }*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    {darkMode ? <LightModeIcon /> : <DarkModeIcon />}*/}
+                {/*</Box>*/}
                 <Box
-                    onClick={toggleTheme}
+                    onClick={cycleTheme}
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -279,10 +313,12 @@ function DashboardLayout() {
                         color: theme.palette.primary.contrastText,
                         "&:hover": {
                             opacity: 0.9
-                        }
+                        },
+                        transition: "background-color 0.3s"
                     }}
+                    title={`Current theme: ${currentTheme} (click to change)`}
                 >
-                    {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+                    {getThemeIcon(currentTheme)}
                 </Box>
             </Box>
 
@@ -302,7 +338,8 @@ function DashboardLayout() {
                     zIndex: 1100,
                     display: "flex",
                     flexDirection: "column",
-                    bgcolor: darkMode ? "#121212" : "#fff",
+                    // bgcolor: darkMode ? "#121212" : "#fff",
+                    bgcolor: theme.palette.background.paper,
                 }}
             >
                 <Box sx={{
@@ -558,7 +595,8 @@ function DashboardLayout() {
                     ml: { xs: 0, sm: `${open ? drawerWidth : 72}px` },
                     mt: "64px",
                     transition: "margin-left 0.3s ease, width 0.3s ease",
-                    bgcolor: darkMode ? "#1a1a1a" : "#fafafa",
+                    // bgcolor: darkMode ? "#1a1a1a" : "#fafafa",
+                    bgcolor: theme.palette.background.default,
                 }}
             >
                 <Outlet />

@@ -16,6 +16,7 @@ import EditCategoryPage from "./components/DashboardComponents/EditCategoryPage"
 import ChannelsPage from "./components/DashboardComponents/ChannelsPage";
 import UserProfile from "./components/UserProfile.jsx";
 import { ThemeContextProvider, useThemeContext } from "./context/ThemeContext";
+import { Palette, ColorLens } from "@mui/icons-material";
 import { CssVarsProvider } from '@mui/joy/styles';
 import TestUI from "./TestUI";
 import TestUIButton from "./components/ui/TestUIButton";
@@ -27,12 +28,42 @@ import RequestsInboxPage from "@/components/DashboardComponents/RequestInboxPage
 import DashboardHomePage from "@/components/DashboardComponents/DashboardHomePage.jsx";
 import ChannelViewPage from "@/components/DashboardComponents/ChannelView/ChannelViewPage.jsx";
 
+// function ThemeToggle() {
+//     const { darkMode, toggleTheme } = useThemeContext();
+//
+//     return (
+//         <IconButton
+//             onClick={toggleTheme}
+//             sx={{
+//                 position: "fixed",
+//                 top: 15,
+//                 right: 15,
+//                 zIndex: 1000,
+//                 color: "inherit",
+//             }}
+//         >
+//             {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+//         </IconButton>
+//     );
+// }
+
 function ThemeToggle() {
-    const { darkMode, toggleTheme } = useThemeContext();
+    const { currentTheme, cycleTheme } = useThemeContext();
+
+    const getThemeIcon = (theme) => {
+        switch(theme) {
+            case 'light': return <LightModeIcon />;
+            case 'dark': return <DarkModeIcon />;
+            case 'purple': return <Palette sx={{ color: '#9c27b0' }} />;
+            case 'pink': return <Palette sx={{ color: '#e91e63' }} />;
+            case 'green': return <Palette sx={{ color: '#4caf50' }} />;
+            default: return <ColorLens />;
+        }
+    };
 
     return (
         <IconButton
-            onClick={toggleTheme}
+            onClick={cycleTheme}
             sx={{
                 position: "fixed",
                 top: 15,
@@ -40,8 +71,9 @@ function ThemeToggle() {
                 zIndex: 1000,
                 color: "inherit",
             }}
+            title={`Current theme: ${currentTheme} (click to change)`}
         >
-            {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            {getThemeIcon(currentTheme)}
         </IconButton>
     );
 }

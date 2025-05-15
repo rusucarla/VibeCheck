@@ -1,10 +1,11 @@
 ﻿// src/components/DashboardComponents/SearchSpotifyTab.jsx
 import { useState, useEffect } from "react";
-import { CssVarsProvider } from "@mui/joy/styles";
+import { CssVarsProvider, extendTheme } from "@mui/joy/styles";
 import { Input, Button, List, Card, CardContent, CardActions, Box, Select, Option, Typography, CircularProgress } from "@mui/joy";
 import { searchSpotifyTracks } from "../../services/spotifyService";
-import { useThemeContext } from "../../context/ThemeContext";
 import { getUserChannels } from "../../services/channelService";
+import { useThemeContext } from "../../context/ThemeContext";
+import { useTheme as useMuiTheme } from "@mui/material";
 
 function SearchSpotifyTab() {
     const [query, setQuery] = useState("");
@@ -14,7 +15,31 @@ function SearchSpotifyTab() {
     const [userChannels, setUserChannels] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [positionForTop5, setPositionForTop5] = useState(1);
-    const { darkMode } = useThemeContext();
+    // const { darkMode } = useThemeContext();
+    const { darkMode, currentTheme } = useThemeContext();
+    const muiTheme = useMuiTheme();
+
+    // Create Joy UI theme that corresponds to the current theme
+    const joyTheme = extendTheme({
+        cssVarPrefix: 'joy',
+        colorSchemes: {
+            light: {
+                palette: {
+                    primary: {
+                        main: muiTheme.palette.primary.main
+                    },
+                },
+            },
+            dark: {
+                palette: {
+                    primary: {
+                        main: muiTheme.palette.primary.main
+                    },
+                },
+            },
+        },
+    });
+
 
     useEffect(() => {
         const fetchUserChannels = async () => {
@@ -113,10 +138,35 @@ function SearchSpotifyTab() {
     };
 
     return (
-        <CssVarsProvider defaultMode={darkMode ? "dark" : "light"}>
-            <Box sx={{ maxWidth: 800, margin: "0 auto" }}>
-                <Typography level="h4" sx={{ mb: 2 }}>Search Spotify</Typography>
+        <CssVarsProvider theme={joyTheme} defaultMode={darkMode ? "dark" : "light"}>
+        <Box sx={{ maxWidth: 800, margin: "0 auto" }}>
+                <Typography
+                    level="h4"
+                    sx={{
+                        mb: 2,
+                        color: muiTheme.palette.text.primary,
+                        fontWeight: 600
+                    }}
+                >
+                    Search Spotify
+                </Typography>
 
+                {/*<Input*/}
+                {/*    placeholder="Search for a track..."*/}
+                {/*    value={query}*/}
+                {/*    onChange={(e) => setQuery(e.target.value)}*/}
+                {/*    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}*/}
+                {/*    endDecorator={*/}
+                {/*        <Button*/}
+                {/*            onClick={handleSearch}*/}
+                {/*            variant="solid"*/}
+                {/*            disabled={isLoading || !query.trim()}*/}
+                {/*        >*/}
+                {/*            {isLoading ? <CircularProgress size="sm" /> : "Search"}*/}
+                {/*        </Button>*/}
+                {/*    }*/}
+                {/*    sx={{ mb: 3, width: '100%' }}*/}
+                {/*/>*/}
                 <Input
                     placeholder="Search for a track..."
                     value={query}
@@ -125,13 +175,30 @@ function SearchSpotifyTab() {
                     endDecorator={
                         <Button
                             onClick={handleSearch}
-                            variant="solid"
+                            variant="outlined"
                             disabled={isLoading || !query.trim()}
                         >
                             {isLoading ? <CircularProgress size="sm" /> : "Search"}
                         </Button>
                     }
-                    sx={{ mb: 3, width: '100%' }}
+                    sx={{
+                        mb: 3,
+                        width: '100%',
+                        backgroundColor: 'transparent',
+                        border: '1px solid',
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                        borderRadius: '8px',
+                        '& input': {
+                            color: darkMode ? '#ffffff' : '#333333',
+                        },
+                        '&:hover': {
+                            borderColor: muiTheme.palette.primary.main,
+                        },
+                        '&:focus-within': {
+                            borderColor: muiTheme.palette.primary.main,
+                            boxShadow: `0 0 0 2px ${muiTheme.palette.primary.main}25`,
+                        }
+                    }}
                 />
 
                 <List sx={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
