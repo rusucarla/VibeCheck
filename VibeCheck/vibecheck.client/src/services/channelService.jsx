@@ -262,21 +262,43 @@ export async function getChannelMessages(channelId) {
     }
 }
 
-export async function sendMessage(channelId, messageData) {
+
+export async function sendMessage(channelId, messageData, file = null) {
     try {
-        const response = await fetch(`${API_URL}/${channelId}/messages`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(messageData),
-        });
+        // If we have a file, use FormData to send both message and file
+        if (file) {
+            const formData = new FormData();
+            formData.append('content', messageData.content || '');
+            formData.append('file', file);
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to send message: ${errorText}`);
+            const response = await fetch(`${API_URL}/${channelId}/messages/with-file`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to send message: ${errorText}`);
+            }
+
+            return await response.json();
+        } else {
+            // Regular message with no attachment
+            const response = await fetch(`${API_URL}/${channelId}/messages`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(messageData),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to send message: ${errorText}`);
+            }
+
+            return await response.json();
         }
-
-        return await response.json();
     } catch (error) {
         console.error("Error sending message:", error);
         throw error;

@@ -75,40 +75,37 @@ function ChannelViewPage() {
     }
 
     return (
-        <Container maxWidth="lg">
-            <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            cursor: 'pointer'
-                        }}
+        <Container maxWidth={false} sx={{ px: { xs: 1, sm: 3, md: 6, lg: 8 } }}>
+            <Box sx={{ mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Button
+                        startIcon={<ArrowBackIcon />}
                         onClick={handleBack}
+                        sx={{ textTransform: 'none', fontSize: '0.875rem' }}
                     >
-                        <ArrowBackIcon sx={{ mr: 1 }} />
-                        <Typography variant="body2">Back to Channels</Typography>
-                    </Box>
+                        Back to Channels
+                    </Button>
                 </Box>
 
-                <Typography variant="h4" component="h1" gutterBottom>
+                <Typography variant="h5" component="h1">
                     {channel.name}
                 </Typography>
 
-                <Typography variant="body1" color="text.secondary" paragraph>
+                <Typography variant="body2" color="text.secondary">
                     {channel.description}
                 </Typography>
 
-                {channel.categories && channel.categories.length > 0 && (
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+                {channel.categories?.length > 0 && (
+                    <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
                         {channel.categories.map(cat => (
-                            <Paper key={cat.id} sx={{ px: 1.5, py: 0.5 }}>
+                            <Paper key={cat.id} sx={{ px: 1.5, py: 0.25 }}>
                                 <Typography variant="caption">{cat.title}</Typography>
                             </Paper>
                         ))}
                     </Box>
                 )}
             </Box>
+
 
             <Divider sx={{ mb: 3 }} />
 

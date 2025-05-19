@@ -766,6 +766,77 @@ namespace VibeCheck.Server.Controllers
                 ChannelId = message.ChannelId
             });
         }
+        
+        // POST: api/channels/{channelId}/messages/with-file
+        [HttpPost("{channelId}/messages/with-file")]
+        public async Task<IActionResult> PostMessageWithFile(int channelId, [FromForm] string content, IFormFile file)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            // Check file size (10MB limit)
+            if (file != null && file.Length > 10 * 1024 * 1024)
+                return BadRequest(new { message = "File size exceeds the 10MB limit" });
+
+            // Save file if provided
+            string? filePath = null;
+            string? fileType = null;
+
+            if (file != null && file.Length > 0)
+            {
+                // Create folders if they don't exist
+                var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+                var todayFolder = Path.Combine(uploadsFolder, today);
+                
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+                    
+                if (!Directory.Exists(todayFolder))
+                    Directory.CreateDirectory(todayFolder);
+
+                // Generate unique filename
+                var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                var fileSavePath = Path.Combine(todayFolder, uniqueFileName);
+                
+                // Save file
+                using (var stream = new FileStream(fileSavePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                
+                // Store relative path for database
+                filePath = $"/uploads/{today}/{uniqueFileName}";
+                fileType = file.ContentType;
+            }
+
+            // Create message
+            var message = new Message
+            {
+                Content = content,
+                FilePath = filePath,
+                FileType = fileType,
+                Date = DateTime.UtcNow,
+                UserId = user.Id,
+                ChannelId = channelId
+            };
+
+            _context.Messages.Add(message);
+            await _context.SaveChangesAsync();
+
+            return Ok(new MessageResponseDto
+            {
+                Id = message.Id,
+                Content = message.Content,
+                FilePath = message.FilePath,
+                FileType = message.FileType,
+                Date = message.Date ?? DateTime.UtcNow,
+                UserId = message.UserId,
+                UserName = user.DisplayName ?? user.UserName ?? "Unknown",
+                ChannelId = message.ChannelId,
+                ProfilePictureUrl = $"/api/user/{user.Id}/profile-picture"
+            });
+        }
 
 
 

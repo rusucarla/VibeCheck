@@ -4,8 +4,11 @@ using VibeCheck.Server.Models;
 using VibeCheck.Server.Data;
 using VibeCheck.Server.Services;
 using DotNetEnv;
+using Microsoft.Extensions.FileProviders;
 using VibeCheck.Server.Migrations;
 using VibeCheck.Server.Models;
+using System;
+using System.IO;
 
 // Pentru a folosi port-ul custom
 // creati voi un fisier .env.local in Server
@@ -82,6 +85,18 @@ app.MapControllers();
 app.MapRazorPages(); 
 app.MapFallbackToFile("/index.html");
 
+var uploadsFolder = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
+if (!Directory.Exists(uploadsFolder))
+{
+    Directory.CreateDirectory(uploadsFolder);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsFolder),
+    RequestPath = "/uploads"
+});
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -90,51 +105,3 @@ using (var scope = app.Services.CreateScope())
 
 
 app.Run();
-
-//// Add controllers
-//builder.Services.AddControllers();
-
-//// Optional: Swagger (useful for testing your endpoints)
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-
-//var app = builder.Build();
-
-//// Seed data if needed
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-
-//    try
-//    {
-//        SeeData.Initialize(services); // Make sure this is a static method
-//    }
-//    catch (Exception ex)
-//    {
-//        var logger = services.GetRequiredService<ILogger<Program>>();
-//        logger.LogError(ex, "An error occurred seeding the DB.");
-//    }
-//}
-
-//// Configure middleware
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-//else
-//{
-//    app.UseExceptionHandler("/error");
-//    app.UseHsts();
-//}
-
-//app.UseHttpsRedirection();
-//app.UseStaticFiles();
-//app.UseRouting();
-
-//app.UseAuthentication();
-//app.UseAuthorization();
-
-//app.MapControllers();
-
-//app.Run();
